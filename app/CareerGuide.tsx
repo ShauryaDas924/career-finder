@@ -53,6 +53,8 @@ function formatMark(format: Resource["format"]) {
   return "JOBS";
 }
 
+// Resource fields are indexed separately from broad category keywords so a
+// specific query such as “PR” or “nursing” returns specialist sources first.
 const searchIndex = new Map(
   resources.map((resource) => [
     resource.id,
@@ -207,6 +209,8 @@ export default function CareerGuide() {
 
     if (directMatches.length) return directMatches;
 
+    // Category aliases are a fallback only when no resource-specific result
+    // exists; this preserves broad discovery without diluting precise searches.
     const fallbackCategories = new Set(
       categories
         .filter((category) =>
@@ -651,12 +655,11 @@ export default function CareerGuide() {
             <div className="about-target" aria-hidden="true"><i /><b /></div>
             <div>
               <p className="eyebrow">WHY THIS EXISTS</p>
-              <h2 id="about-title">Less guessing. More looking.</h2>
+              <h2 id="about-title">Was bored lol so I made this</h2>
             </div>
             <p>
               Where to Look organizes useful career resources in one place so
-              students can spend less time figuring out where to search and more
-              time finding opportunities.
+              students can spend less time figuring out where to search. Its very useful 😎
             </p>
           </div>
         </section>
@@ -680,7 +683,7 @@ export default function CareerGuide() {
             </span>
             <span>WHERE TO LOOK</span>
           </a>
-          <p>Made to help students find their next opportunity.</p>
+          
           <nav aria-label="Footer navigation">
             <a href="#about">About</a>
             <a href="#resource-library">Resources</a>

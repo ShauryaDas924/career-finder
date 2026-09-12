@@ -355,7 +355,7 @@ test("the production page server-renders its content and metadata", async () => 
     "Browse by career path",
     "Find a useful place to look",
     "A few things worth remembering",
-    "Less guessing. More looking.",
+    "Was bored lol so I made this",
     "Show all 60 resources",
   ]) {
     assert.ok(text.includes(phrase), `server-rendered page should include “${phrase}”`);
