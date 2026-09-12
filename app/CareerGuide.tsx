@@ -658,7 +658,7 @@ export default function CareerGuide() {
               <h2 id="about-title">Was bored lol so I made this</h2>
             </div>
             <p>
-              Where to Look organizes useful career resources in one place so
+              Whoopberry organizes useful career resources in one place so
               students can spend less time figuring out where to search. Its very useful 😎
             </p>
           </div>
