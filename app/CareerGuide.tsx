@@ -285,7 +285,7 @@ export default function CareerGuide() {
               <i />
               <b />
             </span>
-            <span>WHERE TO LOOK</span>
+            <span>whoopberry</span>
           </a>
           <nav aria-label="Primary navigation">
             <a href="#start-here">Start here</a>
@@ -681,7 +681,7 @@ export default function CareerGuide() {
             <span className="brand-mark" aria-hidden="true">
               <i /><i /><i /><i /><b />
             </span>
-            <span>WHERE TO LOOK</span>
+            <span>whoopberry</span>
           </a>
           
           <nav aria-label="Footer navigation">
