@@ -5,6 +5,8 @@ import "./globals.css";
 const siteTitle = "Where to Look — Student Career Resource Guide";
 const siteDescription =
   "A friendly, curated field guide to internship and career resources for college students who are not sure where to start.";
+const socialTitle = "whoopberry";
+const socialDescription = "Find your next opportunity.";
 
 export async function generateMetadata(): Promise<Metadata> {
   const requestHeaders = await headers();
@@ -37,22 +39,22 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     openGraph: {
       type: "website",
-      siteName: "Where to Look",
-      title: siteTitle,
-      description: siteDescription,
+      siteName: socialTitle,
+      title: socialTitle,
+      description: socialDescription,
       images: [
         {
           url: socialImage,
           width: 1730,
           height: 909,
-          alt: "Where to Look — Find your next opportunity. A field guide to internship and career resources.",
+          alt: "whoopberry — Find your next opportunity.",
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: siteTitle,
-      description: siteDescription,
+      title: socialTitle,
+      description: socialDescription,
       images: [socialImage],
     },
   };
