@@ -2,7 +2,7 @@
 
 Where to Look is a curated directory of external internship and early-career resources. It helps college students decide where to search; it does not host, copy, scrape, or accept applications for jobs.
 
-The current dataset contains **60 resources across 13 broad career categories**. Counts shown in the interface are derived from [`app/data/resources.ts`](app/data/resources.ts), not duplicated in the component.
+The current dataset contains **61 resources across 13 broad career categories**. Counts shown in the interface are derived from [`app/data/resources.ts`](app/data/resources.ts), not duplicated in the component.
 
 ## Directory and discovery
 
@@ -22,13 +22,13 @@ The current categories are Technology; Business; Finance & Risk; Healthcare; Eng
 
 ### Featured starting points
 
-**What it does:** Presents four broad, student-friendly resources before the full library: ApplyGuy, InternList, Handshake, and Simplify.
+**What it does:** Presents five broad, student-friendly resources before the full library: ApplyGuy, InternList, Handshake, Simplify, and Jobright.ai.
 
 **Why it exists:** A short starting set reduces decision fatigue for students who do not yet know which specialist source they need.
 
 ### Progressive disclosure
 
-**What it does:** The unfiltered library initially renders the first 12 resources and offers a button to show all 60. A search or category selection displays all matching results immediately.
+**What it does:** The unfiltered library initially renders the first 12 resources and offers a button to show all 61. A search or category selection displays all matching results immediately.
 
 **Why it exists:** The first visit remains approachable while the complete directory is still one action away.
 

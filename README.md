@@ -15,7 +15,7 @@ Career information is scattered across professional associations, government por
 3. Learn what each resource is best for.
 4. Continue to the original source and confirm details there.
 
-The current directory contains **60 resources across 13 visible career families**:
+The current directory contains **61 resources across 13 visible career families**:
 
 - Technology
 - Business
@@ -36,7 +36,7 @@ Specific majors such as healthcare management, nursing, civil engineering, actua
 ## Current features
 
 - Five-step “Start Here” guidance for students beginning a search
-- Four editorially selected featured resources
+- Five editorially selected featured resources
 - Career-family cards with live resource counts
 - Specialist-first text search across names, descriptions, formats, tags, “best for” guidance, and aliases
 - Broad-category fallback when a query has no direct resource match
@@ -134,7 +134,7 @@ For every maintained file and when to edit it, see [FILE_MAP.md](FILE_MAP.md).
 - the 13 category IDs and their labels, descriptions, icons, and fallback keywords;
 - allowed resource IDs, formats, and tags;
 - the Resource interface;
-- all 60 resource records;
+- all 61 resource records;
 - the derived featured-resource list and category helper.
 
 To add a resource:

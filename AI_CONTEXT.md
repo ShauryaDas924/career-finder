@@ -88,12 +88,12 @@ See [FILE_MAP.md](FILE_MAP.md) for the complete navigation map.
 | `bestFor` | Yes | Student-oriented use cases displayed on the card and included in search. |
 | `tags` | Yes | Controlled `ResourceTag` values displayed as compact labels and included in search. Cards display at most four tags, or three in the featured section. |
 | `format` | Yes | Controlled `ResourceFormat` value used both as visible context and to derive the compact format mark. |
-| `featured` | Yes | Whether the resource appears in the separate four-card starting shortlist. |
+| `featured` | Yes | Whether the resource appears in the separate five-card starting shortlist. |
 | `searchTerms` | No | Specific majors, roles, and common aliases included in search without adding visible card clutter. |
 | `updateFrequency` | No | A visible cadence claim. Include only when it has been verified and is useful. |
 | `notes` | No | Important caveat or eligibility/context note displayed at the bottom of the card. |
 
-The current data contains **60 resources**, **13 broad categories**, and four featured resources: ApplyGuy, Handshake, InternList, and Simplify. Tests intentionally protect those totals and featured IDs; update the assertions when an editorially approved data change makes them obsolete.
+The current data contains **61 resources**, **13 broad categories**, and five featured resources: ApplyGuy, Handshake, InternList, Jobright.ai, and Simplify. Tests intentionally protect those totals and featured IDs; update the assertions when an editorially approved data change makes them obsolete.
 
 ### Category metadata
 
@@ -176,7 +176,7 @@ The repository uses Node's built-in test runner, `node:assert/strict`, and the T
 
 Current automated coverage verifies:
 
-- 13 categories and 60 resources;
+- 13 categories and 61 resources;
 - unique category IDs, resource IDs, and resource URLs;
 - alignment of ID tuples with authored arrays;
 - HTTPS URL shape, required content, valid categories, tag presence, and the five-tag maximum;

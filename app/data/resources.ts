@@ -346,6 +346,7 @@ export const resourceIds = [
   "my-americorps",
   "parker-dewey",
   "careeronestop-job-search",
+  "jobright",
 ] as const;
 
 export type ResourceId = (typeof resourceIds)[number];
@@ -1555,6 +1556,29 @@ export const resources = [
     format: "Government career portal",
     featured: false,
     searchTerms: ["general jobs", "career exploration", "occupation finder", "entry level", "internships"],
+  },
+  {
+    id: "jobright",
+    name: "Jobright.ai",
+    url: "https://jobright.ai/",
+    description:
+      "A job-search platform for discovering jobs and internships and exploring opportunities across career fields.",
+    categories: ["general-any-major"],
+    bestFor: [
+      "Discovering jobs and internships",
+      "Exploring opportunities across career fields",
+      "Broadening an early-career search",
+    ],
+    tags: ["ALL MAJORS", "EARLY CAREER"],
+    format: "Job platform",
+    featured: true,
+    searchTerms: [
+      "jobright",
+      "job search",
+      "internship search",
+      "entry level jobs",
+      "career opportunities",
+    ],
   },
 ] as const satisfies readonly Resource[];
 

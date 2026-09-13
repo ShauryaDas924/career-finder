@@ -99,7 +99,7 @@ One- and two-character alphanumeric queries use whole-token matching. This preve
 
 ### Mark a resource as featured
 
-Set `featured: true` on the resource. `featuredResources` is derived from that flag and rendered in the four-card shortlist. The current automated test intentionally locks the exact four featured IDs, so a shortlist change must update that assertion and be visually reviewed.
+Set `featured: true` on the resource. `featuredResources` is derived from that flag and rendered in the five-card shortlist. The current automated test intentionally locks the exact five featured IDs, so a shortlist change must update that assertion and be visually reviewed.
 
 ### Adjust artwork
 

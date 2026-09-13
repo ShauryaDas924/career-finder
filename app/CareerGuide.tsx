@@ -421,7 +421,7 @@ export default function CareerGuide() {
                 <h2 id="featured-title">Great places to start</h2>
               </div>
               <p>
-                Four broad, student-friendly starting points when you just want
+                Five broad, student-friendly starting points when you just want
                 to get moving.
               </p>
             </div>
@@ -659,7 +659,7 @@ export default function CareerGuide() {
             </div>
             <p>
               Whoopberry organizes useful career resources in one place so
-              students can spend less time figuring out where to search. Its very useful 😎
+              students can spend less time figuring out where to search. Its very useful trust 😤🥴😎
             </p>
           </div>
         </section>

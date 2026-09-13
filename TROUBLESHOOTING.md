@@ -111,12 +111,12 @@ That command builds before running the Node test suite. If invoking the runner d
 
 ### The expected resource or category count is wrong
 
-The counts of 60 resources and 13 categories are explicit integrity assertions. If the dataset changed intentionally:
+The counts of 61 resources and 13 categories are explicit integrity assertions. If the dataset changed intentionally:
 
 1. Verify `resourceIds` and `resources` still align.
 2. Verify every category has at least one resource.
 3. Update the count assertion.
-4. Update “Show all 60 resources” rendered-copy assertions when the UI's derived total changes.
+4. Update “Show all 61 resources” rendered-copy assertions when the UI's derived total changes.
 5. Run the complete suite.
 
 Do not update an assertion merely to hide an accidental duplicate or deletion.
@@ -129,7 +129,7 @@ The automated suite checks HTTPS syntax, URL parsing, and uniqueness. It deliber
 
 ### A newly added resource is not visible in the initial grid
 
-The default library intentionally shows only the first 12 resources. Use “Show all 60 resources,” search for the item, or apply its category filter. If it should be a quick-start item, changing dataset order affects the product's default shortlist and should be intentional.
+The default library intentionally shows only the first 12 resources. Use “Show all 61 resources,” search for the item, or apply its category filter. If it should be a quick-start item, changing dataset order affects the product's default shortlist and should be intentional.
 
 The separate featured section is controlled by `featured: true`, not by dataset position.
 

@@ -2,7 +2,7 @@
 
 [`app/data/resources.ts`](app/data/resources.ts) is the authoritative source for the taxonomy, resource inventory, search aliases, and featured selection. The interface derives category counts, search results, filters, and featured cards from this file.
 
-Current source inventory: **60 unique resources**, **13 visible categories**, and **4 featured starting points**. A resource can belong to more than one category, so category totals intentionally add up to more than 60.
+Current source inventory: **61 unique resources**, **13 visible categories**, and **5 featured starting points**. A resource can belong to more than one category, so category totals intentionally add up to more than 61.
 
 ## Curation principles
 
@@ -42,7 +42,7 @@ Every card should answer “Why would a student open this?” The directory is d
 | `government-law-policy` | Government, Law & Policy | 10 |
 | `education` | Education | 4 |
 | `human-services-nonprofit` | Human Services & Nonprofit | 5 |
-| `general-any-major` | General / Any Major | 13 |
+| `general-any-major` | General / Any Major | 14 |
 
 These counts come from the current multi-category assignments. Update this table when the dataset changes.
 
@@ -60,8 +60,8 @@ The `Resource` interface is read-only and uses closed TypeScript unions for IDs,
 | `bestFor` | Yes | Non-empty array of short student-oriented uses | Explains who should open it and why | `["Nursing careers"]` |
 | `tags` | Yes | One to five values from `ResourceTag` | Visible scan labels and direct search terms | `["NURSING", "CLINICAL", "HEALTHCARE", "EARLY CAREER"]` |
 | `format` | Yes | One `ResourceFormat` literal | Visible source type and compact format mark | `"Professional association job board"` |
-| `featured` | Yes | Boolean | Includes a resource in the four-card starting section when `true` | `false` |
-| `searchTerms` | No in the type; present on all 60 current resources | Array of specific majors, roles, abbreviations, and aliases | Improves direct search without crowding the card | `["registered nurse", "RN"]` |
+| `featured` | Yes | Boolean | Includes a resource in the five-card starting section when `true` | `false` |
+| `searchTerms` | No in the type; present on all 61 current resources | Array of specific majors, roles, abbreviations, and aliases | Improves direct search without crowding the card | `["registered nurse", "RN"]` |
 | `updateFrequency` | No | Short claim that has been specifically verified | Shows an update badge | `"Updated daily"` |
 | `notes` | No | Concise qualification, limitation, or useful caveat | Sets accurate expectations below the card | Eligibility or audience note |
 
@@ -134,12 +134,13 @@ Resources keep their source-array order. That order controls the first 12 cards 
 
 ## Featured resources
 
-`featuredResources` is derived by filtering `resources` where `featured` is `true`. The current four are:
+`featuredResources` is derived by filtering `resources` where `featured` is `true`. The current five are:
 
 - `applyguy-2027-internships`
 - `internlist`
 - `handshake`
 - `simplify`
+- `jobright`
 
 Keep the featured set small and broad. Mark a specialist resource as featured only with an intentional product decision, and update the exact-featured assertion in the tests when that decision changes.
 

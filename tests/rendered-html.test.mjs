@@ -151,7 +151,7 @@ test("resource data remains complete, unique, and internally consistent", async 
   } = await loadResourceData();
 
   assert.equal(categories.length, 13);
-  assert.equal(resources.length, 60);
+  assert.equal(resources.length, 61);
   assert.equal(new Set(categories.map(({ id }) => id)).size, categories.length);
   assert.equal(new Set(resources.map(({ id }) => id)).size, resources.length);
   assert.equal(new Set(resources.map(({ url }) => url)).size, resources.length);
@@ -186,6 +186,7 @@ test("resource data remains complete, unique, and internally consistent", async 
     "applyguy-2027-internships",
     "handshake",
     "internlist",
+    "jobright",
     "simplify",
   ];
   const actualFeaturedIds = resources
@@ -195,6 +196,11 @@ test("resource data remains complete, unique, and internally consistent", async 
 
   assert.deepEqual(actualFeaturedIds, expectedFeaturedIds);
   assert.deepEqual(featuredResources.map(({ id }) => id).sort(), expectedFeaturedIds);
+
+  const jobrightResources = resources.filter(({ name }) => name === "Jobright.ai");
+  assert.equal(jobrightResources.length, 1);
+  assert.equal(jobrightResources[0].url, "https://jobright.ai/");
+  assert.equal(jobrightResources[0].featured, true);
 });
 
 test("search covers the addendum's majors and career directions", async () => {
@@ -261,6 +267,7 @@ test("search covers the addendum's majors and career directions", async () => {
   assert.ok(search("IT").some((resource) => resource.id === "ieee-jobs"));
   assert.ok(search("PR").some((resource) => resource.id === "prsa-jobcenter"));
   assert.ok(search("HR").some((resource) => resource.id === "shrm-hr-jobs"));
+  assert.ok(search("Jobright.ai").some((resource) => resource.id === "jobright"));
 
   const civilEngineeringIds = new Set(search("civil engineering").map(({ id }) => id));
   assert.ok(civilEngineeringIds.has("asce-career-connections"));
@@ -356,13 +363,18 @@ test("the production page server-renders its content and metadata", async () => 
     "Find a useful place to look",
     "A few things worth remembering",
     "Was bored lol so I made this",
-    "Show all 60 resources",
+    "Show all 61 resources",
   ]) {
     assert.ok(text.includes(phrase), `server-rendered page should include “${phrase}”`);
   }
 
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/i);
   assert.doesNotMatch(text, /Your site is taking shape|Building your site/i);
+
+  assert.match(
+    html,
+    /<a\b(?=[^>]*\bhref="https:\/\/jobright\.ai\/")(?=[^>]*\btarget="_blank")(?=[^>]*\brel="(?=[^"]*\bnoopener\b)(?=[^"]*\bnoreferrer\b)[^"]*")[^>]*>/i,
+  );
 
   const newTabLinks = html.match(/<a\b(?=[^>]*\btarget="_blank")[^>]*>/gi) ?? [];
   assert.ok(newTabLinks.length >= 4, "resource links should render on the server");

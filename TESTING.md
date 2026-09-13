@@ -39,7 +39,7 @@ Do not run the Node test file against stale output. Its rendered-page test impor
 
 The dataset test verifies:
 
-- 13 category records and 60 resource records
+- 13 category records and 61 resource records
 - unique category IDs, resource IDs, and resource URLs
 - alignment between the exported ID lists and data arrays
 - HTTPS and parseable resource URLs
@@ -47,7 +47,7 @@ The dataset test verifies:
 - one to five tags per resource
 - only known category IDs
 - at least one resource in every category
-- the exact four intended featured resources
+- the exact five intended featured resources
 
 These are structural checks. They do not make network requests, so a passing test does not prove that an external destination is currently live or that its content still supports the description.
 
@@ -69,7 +69,7 @@ The production-page test invokes the built Worker and verifies:
 - `lang="en"`
 - the current title, description, and host-derived Open Graph image URL
 - important page headings and copy in server-rendered HTML
-- the 60-resource expansion control
+- the 61-resource expansion control
 - absence of starter-preview content
 - server-rendered external resource links
 - `noopener noreferrer` on links that open a new tab
@@ -90,7 +90,7 @@ The production-page test invokes the built Worker and verifies:
 
 - Load the page with no console-visible failure.
 - Confirm the sticky navigation reaches each labeled section.
-- Confirm the first 12 library resources appear by default and the expansion control reveals all 60.
+- Confirm the first 12 library resources appear by default and the expansion control reveals all 61.
 - Inspect the hero, category grid, cards, tips, footer, and dialog at a wide viewport.
 - Confirm no text clips at large browser zoom.
 

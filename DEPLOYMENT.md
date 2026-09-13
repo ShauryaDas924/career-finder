@@ -155,7 +155,7 @@ After a deployment reports success:
 
 - Load the canonical HTTPS URL and refresh a deep hash such as `#resource-library`.
 - Verify title, description, favicon, and the absolute Open Graph image URL.
-- Confirm the first 12 resources and the “Show all 60 resources” control.
+- Confirm the first 12 resources and the “Show all 61 resources” control.
 - Test a specialist search, a category filter, a no-results query, and reset.
 - Open several external resources in new tabs.
 - Check a narrow mobile viewport, keyboard focus, and reduced motion.

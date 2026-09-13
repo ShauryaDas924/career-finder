@@ -109,7 +109,7 @@ The remaining scene elements are local decorative spans. Keeping them with the p
 
 The data uses `readonly` contracts and `as const satisfies` to preserve literal values while checking record shape. `resourceIds` and the `resources` array are separately authored; the tests require them to contain the same IDs in the same order.
 
-At present there are 13 categories and 60 resources. Counts shown in the hero, category cards, results copy, and show-all button are derived from the arrays rather than duplicated constants.
+At present there are 13 categories and 61 resources. Counts shown in the hero, category cards, results copy, and show-all button are derived from the arrays rather than duplicated constants.
 
 For schema and editorial rules, see [RESOURCE_GUIDE.md](RESOURCE_GUIDE.md).
 
@@ -219,7 +219,7 @@ The design is responsive rather than route- or device-specific: grids collapse, 
 
 - The product's value is editorial curation and findability, not data transactions.
 - One typed module is easier to review than a database-backed administration system for the current catalog size.
-- Client-side search is immediate and inexpensive for 60 records.
+- Client-side search is immediate and inexpensive for 61 records.
 - Derived views prevent counts and featured lists from drifting away from source data.
 - Server-rendered initial HTML preserves content and metadata while one client component supplies the necessary interactivity.
 - A stateless Worker keeps deployment compatible with the existing Sites/Vinext build without inventing storage needs.
