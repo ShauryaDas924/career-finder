@@ -1,10 +1,10 @@
 # Testing
 
-Where to Look uses a small test system matched to its deliberately simple architecture. Automated checks protect the curated dataset, specialist-first search behavior, healthcare coverage, and the server-rendered page. Manual review covers interaction and visual behavior that the current suite does not automate.
+Where to Look uses a small test system matched to its deliberately simple architecture. Automated checks protect the curated dataset, specialist-first search behavior, college-year guidance, healthcare coverage, and the server-rendered page. Manual review covers interaction and visual behavior that the current suite does not automate.
 
 ## Tools and locations
 
-- `tests/rendered-html.test.mjs` contains all four current top-level tests.
+- `tests/rendered-html.test.mjs` contains all five current top-level tests.
 - Node's built-in `node:test` runner executes the suite.
 - `node:assert/strict` provides assertions.
 - The TypeScript compiler API transpiles `app/data/resources.ts` in memory so the tests inspect the real exported data rather than a duplicate fixture.
@@ -39,14 +39,18 @@ Do not run the Node test file against stale output. Its rendered-page test impor
 
 The dataset test verifies:
 
-- 13 category records and 61 resource records
+- 13 category records and 62 resource records
 - unique category IDs, resource IDs, and resource URLs
 - alignment between the exported ID lists and data arrays
+- the exact college-year ID order: `freshman`, `sophomore`, `junior`, `senior`, `new-grad`
+- aligned college-year metadata and the expected visible labels
 - HTTPS and parseable resource URLs
 - required names, descriptions, best-for guidance, categories, and tags
 - one to five tags per resource
 - only known category IDs
+- only known, nonrepeating college-year IDs in optional `recommendedForYears` arrays
 - at least one resource in every category
+- at least one recommended resource for every college year and intentional assignments on representative resources
 - the exact five intended featured resources
 
 These are structural checks. They do not make network requests, so a passing test does not prove that an external destination is currently live or that its content still supports the description.
@@ -56,6 +60,18 @@ These are structural checks. They do not make network requests, so a passing tes
 The search test mirrors the client algorithm and verifies the required majors and career directions return at least one starting point. It also protects whole-token behavior for short aliases such as `AI`, `IT`, `PR`, and `HR`, plus specialist results for civil engineering.
 
 Because the helper mirrors implementation code rather than importing it from `CareerGuide.tsx`, update both places together when the algorithm changes.
+
+### College-year guidance
+
+The college-year test verifies that year guidance composes with the existing filters instead of bypassing them. It covers:
+
+- all 62 resources when category, year, and query are unrestricted;
+- a Technology + Sophomore result narrowed to the intended underclassmen resource;
+- a Sophomore + `research` query retaining a strong research resource;
+- category + year + query intersections for underclassmen technology and new-grad healthcare;
+- exclusion when a resource is not recommended for the selected year.
+
+`recommendedForYears` is editorial guidance about when a resource is especially useful, not an assertion of job-level eligibility. Automated tests can validate IDs and composition, but maintainers must manually confirm that every assignment remains reasonable and that visible copy continues to tell students to verify eligibility at the original source.
 
 ### Healthcare coverage
 
@@ -69,7 +85,9 @@ The production-page test invokes the built Worker and verifies:
 - `lang="en"`
 - the current title, description, and host-derived Open Graph image URL
 - important page headings and copy in server-rendered HTML
-- the 61-resource expansion control
+- the Browse by College Year heading and eligibility guidance
+- all five year labels and the default pressed “All years” control
+- the 62-resource expansion control
 - absence of starter-preview content
 - server-rendered external resource links
 - `noopener noreferrer` on links that open a new tab
@@ -79,7 +97,7 @@ The production-page test invokes the built Worker and verifies:
 | Change | Minimum checks | Manual review |
 | --- | --- | --- |
 | Resource text, aliases, URL, tags, or category assignment | `npm run lint`, `npx tsc --noEmit`, `npm test` | Confirm the real destination and search result quality. |
-| Category or featured-list change | Full validation suite | Category counts, card layout, filter labels, shortlist composition, mobile filter scrolling. |
+| Category, college-year guidance, or featured-list change | Full validation suite | Category/year counts, card layout, filter labels, combined category + year + query results, result status, reset behavior, shortlist composition, and mobile filter scrolling. |
 | CSS, artwork, or animation | `npm run lint`, `npx tsc --noEmit`, `npm run build` | Desktop, mobile, focus, contrast, overflow, reduced motion, and print if affected. |
 | Search/filter or dialog behavior | Add/update a test where practical, then run the full suite | Keyboard, empty state, combined query/filter state, dialog open/close, polite status announcements. |
 | Metadata, Worker, Vite, or dependency change | Full validation suite from a clean install when practical | Built response, favicon/social card, local production start, deployment artifact layout. |
@@ -90,14 +108,17 @@ The production-page test invokes the built Worker and verifies:
 
 - Load the page with no console-visible failure.
 - Confirm the sticky navigation reaches each labeled section.
-- Confirm the first 12 library resources appear by default and the expansion control reveals all 61.
+- Confirm the first 12 library resources appear by default and the expansion control reveals all 62.
+- Confirm Browse by College Year shows Freshman, Sophomore, Junior, Senior, and New Grad with counts derived from the current dataset.
+- Choose each year and confirm it applies the matching library filter, collapses an expanded list, scrolls to the library, and focuses search.
 - Inspect the hero, category grid, cards, tips, footer, and dialog at a wide viewport.
 - Confirm no text clips at large browser zoom.
 
 ### Mobile
 
 - Inspect at 320 CSS pixels and at a representative modern phone width.
-- Confirm the header navigation and filter chips scroll within their own rows.
+- Confirm the header navigation and both library filter rows scroll within their own rows.
+- Confirm the Browse by College Year panel stacks by 1050px, its five controls use three columns by 820px and two by 580px, and labels, counts, and focus outlines do not clip.
 - Confirm cards use one column and buttons remain usable.
 - Confirm the illustration does not cover copy or controls.
 - Confirm the document has no unintended horizontal page overflow.
@@ -108,8 +129,12 @@ The production-page test invokes the built Worker and verifies:
 - Search a specialist term such as `healthcare management` and confirm the result stays focused instead of expanding to the entire Healthcare category.
 - Search `AI`, `IT`, `PR`, and `HR` and check that unrelated substring matches do not appear.
 - Combine a query with a category filter.
+- Combine a query with both a category and college-year filter; confirm every result satisfies all three dimensions.
+- Confirm the live result status names the active category, year audience, and query, with the correct count.
+- Confirm selecting All years removes only the year restriction and preserves the active category and query.
 - Enter a query with no result, confirm the empty state, then clear it.
-- Confirm the live result count changes and the clear controls restore the default state.
+- Confirm Clear filters restores All paths, All years, an empty query, the first 12 resources, and search focus.
+- Confirm the empty-state recovery action restores All paths, All years, an empty query, all resources, and search focus.
 
 ### Links and content
 
@@ -121,7 +146,9 @@ The production-page test invokes the built Worker and verifies:
 ### Keyboard and accessibility
 
 - Use the skip link to reach main content.
-- Navigate header links, category cards, search, filters, resource links, footer controls, and dialog buttons with the keyboard.
+- Navigate header links, category cards, college-year cards, search, both filter groups, resource links, footer controls, and dialog buttons with the keyboard.
+- Confirm all year controls work with Space and Enter, expose `aria-pressed`, and do not rely on color alone.
+- Confirm each Browse by College Year card's accessible name includes its audience and current count.
 - Confirm focus is always visible.
 - Confirm category selection moves focus to the search field without disorienting scrolling.
 - Open and dismiss the native suggestion dialog, including with Escape.
@@ -131,7 +158,7 @@ The production-page test invokes the built Worker and verifies:
 
 - Enable the operating system or browser preference for reduced motion.
 - Confirm pinwheels, clouds, swirls, target breathing, path hops, and tree sway do not continue visibly.
-- Confirm navigation and category selection do not smooth-scroll.
+- Confirm navigation and career-path or college-year card selection do not smooth-scroll.
 - Confirm no information depends on animation.
 
 ## Passing criteria

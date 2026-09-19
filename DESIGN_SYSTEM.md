@@ -116,7 +116,9 @@ Category cards are button elements with an original CSS mark, title, description
 
 ### Search and filters
 
-The explorer is a paper panel with a visible label above a pill search input and a fieldset/legend around filter chips. The active filter is navy with cream text, a coral offset shadow, and a visible checkmark. Mobile filter chips remain a single horizontally scrollable row.
+The Browse by College Year section is a bordered paper panel with explanatory copy and five native button cards. The cards use the existing pastel sequence, show their derived resource counts, and switch to navy with cream text, a coral offset shadow, and a visible checkmark when pressed.
+
+The explorer is a paper panel with a visible label above a pill search input and separate fieldset/legend groups for career-path and college-year chips. Category, year, and query states compose. Active chips use navy with cream text, a coral offset shadow, and a visible checkmark. The result line reflects all active dimensions, and reset actions return the explorer to All paths, All years, an empty query, and the first 12 resources. Mobile filter-chip rows remain independently horizontally scrollable.
 
 ### Guidance panels and dialog
 
@@ -139,7 +141,7 @@ Motion is decorative or confirmatory; it never carries required content. Animati
 | Trees | 5s alternating sway with optional delay |
 | Control and hover transitions | approximately 140–180ms |
 
-The `prefers-reduced-motion: reduce` block changes document scrolling to `auto`, reduces all animation and transition durations to `0.001ms`, and limits animations to one iteration. The category-card scroll handler separately chooses `auto` instead of `smooth` when the same media query matches.
+The `prefers-reduced-motion: reduce` block changes document scrolling to `auto`, reduces all animation and transition durations to `0.001ms`, and limits animations to one iteration. Career-path and college-year card navigation separately chooses `auto` instead of `smooth` when the same media query matches.
 
 When adding motion:
 
@@ -154,11 +156,13 @@ When adding motion:
 The stylesheet has breakpoints at 1050px, 820px, and 580px.
 
 - **Above 1050px:** two-column hero, four-column category grid, three-column resource grid, and two-column featured grid.
-- **1050px and below:** the hero remains two-column at narrower proportions; categories move to three columns, resources to two columns, the Start Here introduction stacks, and the footer grid simplifies.
-- **820px and below:** the hero and featured cards become one-column; categories use two columns; the search/filter panel, Start Here steps, and tips board stack. The About panel keeps its target and heading side by side while its body copy moves below them.
-- **580px and below:** 12px page gutters, single-column categories and resources, full-width hero actions and resource links, horizontal navigation/filter scrolling, simplified scenery, one-column tips/footer, and tighter panels.
+- **1050px and below:** the hero remains two-column at narrower proportions; categories move to three columns, resources to two columns, the Start Here introduction and Browse by College Year panel stack, and the footer grid simplifies.
+- **820px and below:** the hero and featured cards become one-column; categories use two columns; the college-year cards use three columns; and the search/filter panel, Start Here steps, and tips board stack. The About panel keeps its target and heading side by side while its body copy moves below them.
+- **580px and below:** 12px page gutters, single-column categories and resources, a two-column Browse by College Year card grid, full-width hero actions and resource links, horizontal navigation/filter scrolling, simplified scenery, one-column tips/footer, and tighter panels.
 
 `html` clips horizontal overflow and `body` hides it as a final guard, but individual components should still be sized correctly. Test at 320px rather than relying on the overflow guard.
+
+When changing the year controls, verify that all five labels and counts fit without clipping at desktop, tablet, 390px, and 320px widths; that each library filter row scrolls independently on mobile; and that active, hover, focus, and reduced-motion states remain consistent with the existing control language.
 
 ## Patterns to avoid
 

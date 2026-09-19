@@ -16,6 +16,11 @@ Use this section while work is in progress. Add only headings that have entries:
 
 Move completed entries into a versioned section when a release is actually made.
 
+### Added
+
+- Browse by College Year controls for combining optional resource-level year guidance with career-category filters and text search; individual-opportunity eligibility must still be verified at the original source.
+- Underclassmen Opportunities as a technology-focused resource for freshmen and sophomores.
+
 ## [0.1.0] — Initial completed product (date not recorded)
 
 ### Added

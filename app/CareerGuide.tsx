@@ -9,14 +9,18 @@ import {
 import {
   categories,
   categoryById,
+  collegeYearById,
+  collegeYears,
   featuredResources,
   resources,
   type CategoryIcon,
   type CategoryId,
+  type CollegeYearId,
   type Resource,
 } from "./data/resources";
 
 type ActiveCategory = "all" | CategoryId;
+type ActiveCollegeYear = "all" | CollegeYearId;
 
 function normalizeSearchText(value: string) {
   return value
@@ -87,6 +91,48 @@ function matchesSearchText(normalizedIndex: string, normalizedQuery: string) {
   return shortQueryNeedsWholeToken
     ? (" " + normalizedIndex + " ").includes(" " + normalizedQuery + " ")
     : normalizedIndex.includes(normalizedQuery);
+}
+
+function filterResources(
+  query: string,
+  activeCategory: ActiveCategory,
+  activeCollegeYear: ActiveCollegeYear,
+) {
+  const normalizedQuery = normalizeSearchText(query);
+  const resourcesInScope = resources.filter(
+    (resource: Resource) =>
+      (activeCategory === "all" ||
+        resource.categories.includes(activeCategory)) &&
+      (activeCollegeYear === "all" ||
+        resource.recommendedForYears?.includes(activeCollegeYear)),
+  );
+
+  if (!normalizedQuery) return resourcesInScope;
+
+  const directMatches = resourcesInScope.filter((resource) =>
+    matchesSearchText(searchIndex.get(resource.id) ?? "", normalizedQuery),
+  );
+
+  if (directMatches.length) return directMatches;
+
+  // Category aliases are a fallback only when no resource-specific result
+  // exists; this preserves broad discovery without diluting precise searches.
+  const fallbackCategories = new Set(
+    categories
+      .filter((category) =>
+        matchesSearchText(
+          categorySearchIndex.get(category.id) ?? "",
+          normalizedQuery,
+        ),
+      )
+      .map((category) => category.id),
+  );
+
+  return resourcesInScope.filter((resource) =>
+    resource.categories.some((categoryId) =>
+      fallbackCategories.has(categoryId),
+    ),
+  );
 }
 
 function Pinwheel({
@@ -189,55 +235,27 @@ export default function CareerGuide() {
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] =
     useState<ActiveCategory>("all");
+  const [activeCollegeYear, setActiveCollegeYear] =
+    useState<ActiveCollegeYear>("all");
   const [showAllResources, setShowAllResources] = useState(false);
   const searchInput = useRef<HTMLInputElement>(null);
   const suggestionDialog = useRef<HTMLDialogElement>(null);
 
-  const filteredResources = useMemo(() => {
-    const normalizedQuery = normalizeSearchText(query);
-    const resourcesInCategory = resources.filter(
-      (resource) =>
-        activeCategory === "all" ||
-        (resource.categories as readonly CategoryId[]).includes(activeCategory),
-    );
+  const filteredResources = useMemo(
+    () => filterResources(query, activeCategory, activeCollegeYear),
+    [activeCategory, activeCollegeYear, query],
+  );
 
-    if (!normalizedQuery) return resourcesInCategory;
-
-    const directMatches = resourcesInCategory.filter((resource) =>
-      matchesSearchText(searchIndex.get(resource.id) ?? "", normalizedQuery),
-    );
-
-    if (directMatches.length) return directMatches;
-
-    // Category aliases are a fallback only when no resource-specific result
-    // exists; this preserves broad discovery without diluting precise searches.
-    const fallbackCategories = new Set(
-      categories
-        .filter((category) =>
-          matchesSearchText(
-            categorySearchIndex.get(category.id) ?? "",
-            normalizedQuery,
-          ),
-        )
-        .map((category) => category.id),
-    );
-
-    return resourcesInCategory.filter((resource) =>
-      resource.categories.some((categoryId) =>
-        fallbackCategories.has(categoryId),
-      ),
-    );
-  }, [activeCategory, query]);
-
-  const isDefaultView = activeCategory === "all" && query.trim().length === 0;
+  const isDefaultView =
+    activeCategory === "all" &&
+    activeCollegeYear === "all" &&
+    query.trim().length === 0;
   const visibleResources =
     isDefaultView && !showAllResources
       ? filteredResources.slice(0, 12)
       : filteredResources;
 
-  const chooseCategory = (categoryId: CategoryId) => {
-    setActiveCategory(categoryId);
-    setShowAllResources(false);
+  const moveToLibraryAndFocusSearch = () => {
     window.requestAnimationFrame(() => {
       const prefersReducedMotion = window.matchMedia(
         "(prefers-reduced-motion: reduce)",
@@ -252,14 +270,39 @@ export default function CareerGuide() {
     });
   };
 
+  const chooseCategory = (categoryId: CategoryId) => {
+    setActiveCategory(categoryId);
+    setShowAllResources(false);
+    moveToLibraryAndFocusSearch();
+  };
+
+  const updateCollegeYear = (collegeYearId: ActiveCollegeYear) => {
+    setActiveCollegeYear(collegeYearId);
+    setShowAllResources(false);
+  };
+
+  const chooseCollegeYear = (collegeYearId: CollegeYearId) => {
+    updateCollegeYear(collegeYearId);
+    moveToLibraryAndFocusSearch();
+  };
+
   const resetExplorer = () => {
     setQuery("");
     setActiveCategory("all");
+    setActiveCollegeYear("all");
     setShowAllResources(false);
   };
 
   const resetExplorerAndFocus = () => {
     resetExplorer();
+    window.requestAnimationFrame(() => searchInput.current?.focus());
+  };
+
+  const showEveryResource = () => {
+    setQuery("");
+    setActiveCategory("all");
+    setActiveCollegeYear("all");
+    setShowAllResources(true);
     window.requestAnimationFrame(() => searchInput.current?.focus());
   };
 
@@ -451,8 +494,10 @@ export default function CareerGuide() {
             </div>
             <div className="category-grid">
               {categories.map((category, index) => {
-                const count = resources.filter((resource) =>
-                  (resource.categories as readonly CategoryId[]).includes(category.id),
+                const count = filterResources(
+                  query,
+                  category.id,
+                  activeCollegeYear,
                 ).length;
 
                 return (
@@ -480,6 +525,58 @@ export default function CareerGuide() {
         </section>
 
         <section
+          className="year-section"
+          id="college-years"
+          aria-labelledby="college-years-title"
+        >
+          <div className="page-shell year-panel">
+            <div className="year-panel__copy">
+              <p className="eyebrow">START WHERE YOU ARE</p>
+              <h2 id="college-years-title">Browse by college year</h2>
+              <p id="college-year-guidance">
+                Find resources especially useful for your current year.
+                Eligibility varies by opportunity, so always confirm details
+                on the original source.
+              </p>
+            </div>
+            <fieldset
+              className="year-browse-group"
+              aria-describedby="college-year-guidance"
+            >
+              <legend>Choose your year</legend>
+              <div className="year-browse-list">
+                {collegeYears.map((collegeYear, index) => {
+                  const count = filterResources(
+                    query,
+                    activeCategory,
+                    collegeYear.id,
+                  ).length;
+
+                  return (
+                    <button
+                      className={
+                        activeCollegeYear === collegeYear.id ? "is-active" : ""
+                      }
+                      data-tone={(index % 5) + 1}
+                      key={collegeYear.id}
+                      type="button"
+                      aria-pressed={activeCollegeYear === collegeYear.id}
+                      aria-label={`Show resources especially useful for ${collegeYear.audienceLabel}, ${count} ${count === 1 ? "resource" : "resources"}`}
+                      onClick={() => chooseCollegeYear(collegeYear.id)}
+                    >
+                      <b>{collegeYear.label}</b>
+                      <span>
+                        {count} {count === 1 ? "resource" : "resources"}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </fieldset>
+          </div>
+        </section>
+
+        <section
           className="library-section"
           id="resource-library"
           aria-labelledby="library-title"
@@ -491,8 +588,8 @@ export default function CareerGuide() {
                 <h2 id="library-title">Find a useful place to look</h2>
               </div>
               <p>
-                Search by major, role, or topic, then narrow the list with one
-                broad career path.
+                Search by major, role, or topic, then narrow the list by career
+                path and college year.
               </p>
             </div>
 
@@ -525,36 +622,68 @@ export default function CareerGuide() {
                 </span>
               </div>
 
-              <fieldset className="filter-group">
-                <legend className="filter-label">Filter by career path</legend>
-                <div className="filter-list">
-                  <button
-                    type="button"
-                    className={activeCategory === "all" ? "is-active" : ""}
-                    aria-pressed={activeCategory === "all"}
-                    onClick={() => {
-                      setActiveCategory("all");
-                      setShowAllResources(false);
-                    }}
-                  >
-                    All
-                  </button>
-                  {categories.map((category) => (
+              <div className="filter-stack">
+                <fieldset className="filter-group">
+                  <legend className="filter-label">Filter by career path</legend>
+                  <div className="filter-list">
                     <button
                       type="button"
-                      key={category.id}
-                      className={activeCategory === category.id ? "is-active" : ""}
-                      aria-pressed={activeCategory === category.id}
+                      className={activeCategory === "all" ? "is-active" : ""}
+                      aria-pressed={activeCategory === "all"}
                       onClick={() => {
-                        setActiveCategory(category.id);
+                        setActiveCategory("all");
                         setShowAllResources(false);
                       }}
                     >
-                      {category.shortLabel}
+                      All paths
                     </button>
-                  ))}
-                </div>
-              </fieldset>
+                    {categories.map((category) => (
+                      <button
+                        type="button"
+                        key={category.id}
+                        className={activeCategory === category.id ? "is-active" : ""}
+                        aria-pressed={activeCategory === category.id}
+                        onClick={() => {
+                          setActiveCategory(category.id);
+                          setShowAllResources(false);
+                        }}
+                      >
+                        {category.shortLabel}
+                      </button>
+                    ))}
+                  </div>
+                </fieldset>
+
+                <fieldset
+                  className="filter-group"
+                  aria-describedby="college-year-guidance"
+                >
+                  <legend className="filter-label">Filter by college year</legend>
+                  <div className="filter-list filter-list--years">
+                    <button
+                      type="button"
+                      className={activeCollegeYear === "all" ? "is-active" : ""}
+                      aria-pressed={activeCollegeYear === "all"}
+                      onClick={() => updateCollegeYear("all")}
+                    >
+                      All years
+                    </button>
+                    {collegeYears.map((collegeYear) => (
+                      <button
+                        type="button"
+                        key={collegeYear.id}
+                        className={
+                          activeCollegeYear === collegeYear.id ? "is-active" : ""
+                        }
+                        aria-pressed={activeCollegeYear === collegeYear.id}
+                        onClick={() => updateCollegeYear(collegeYear.id)}
+                      >
+                        {collegeYear.label}
+                      </button>
+                    ))}
+                  </div>
+                </fieldset>
+              </div>
             </div>
 
             <div className="results-line">
@@ -571,11 +700,21 @@ export default function CareerGuide() {
                     {activeCategory !== "all" ? (
                       <> for <strong>{categoryById[activeCategory].label}</strong></>
                     ) : null}
+                    {activeCollegeYear !== "all" ? (
+                      <>
+                        {" "}especially useful for{" "}
+                        <strong>
+                          {collegeYearById[activeCollegeYear].audienceLabel}
+                        </strong>
+                      </>
+                    ) : null}
                     {query.trim() ? <> matching “{query.trim()}”</> : null}
                   </>
                 )}
               </p>
-              {activeCategory !== "all" || query ? (
+              {activeCategory !== "all" ||
+              activeCollegeYear !== "all" ||
+              query ? (
                 <button type="button" onClick={resetExplorerAndFocus}>
                   Clear filters
                 </button>
@@ -593,13 +732,13 @@ export default function CareerGuide() {
                 <span className="empty-target" aria-hidden="true"><i /></span>
                 <h3>No path found—yet.</h3>
                 <p>
-                  Try a broader word like “business,” “software,” or “general,”
-                  or clear your filters and start again.
+                  Try a broader word, another career path or college year, or
+                  clear your filters and start again.
                 </p>
                 <button
                   className="button button--primary"
                   type="button"
-                  onClick={resetExplorerAndFocus}
+                  onClick={showEveryResource}
                 >
                   Show every resource
                 </button>

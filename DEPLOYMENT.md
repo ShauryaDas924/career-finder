@@ -155,8 +155,8 @@ After a deployment reports success:
 
 - Load the canonical HTTPS URL and refresh a deep hash such as `#resource-library`.
 - Verify title, description, favicon, and the absolute Open Graph image URL.
-- Confirm the first 12 resources and the “Show all 61 resources” control.
-- Test a specialist search, a category filter, a no-results query, and reset.
+- Confirm the first 12 resources and the “Show all 62 resources” control.
+- Test a specialist search, a college-year filter, category + year, search + year, category + search + year, a no-results combination, and reset.
 - Open several external resources in new tabs.
 - Check a narrow mobile viewport, keyboard focus, and reduced motion.
 - Confirm there is no horizontal page overflow and no application error in the browser.

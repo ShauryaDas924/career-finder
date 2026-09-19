@@ -24,7 +24,7 @@ The “Suggest a resource” control opens an informational dialog. It explicitl
 
 ## Search and filter data
 
-Search text, the active category, and the expanded/collapsed library state are React component state held in memory. They are not written to browser storage, included in the URL, or sent to an application API. Reloading the page resets them.
+Search text, the active category, the active college year, and the expanded/collapsed library state are React component state held in memory. They are not written to browser storage, included in the URL, or sent to an application API. Reloading the page resets them. The college-year filter does not create a student profile or change this privacy posture.
 
 The resource dataset is bundled with the application. The browser does not send a query to resource providers when a visitor types into the guide.
 

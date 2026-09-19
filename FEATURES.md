@@ -2,7 +2,7 @@
 
 Where to Look is a curated directory of external internship and early-career resources. It helps college students decide where to search; it does not host, copy, scrape, or accept applications for jobs.
 
-The current dataset contains **61 resources across 13 broad career categories**. Counts shown in the interface are derived from [`app/data/resources.ts`](app/data/resources.ts), not duplicated in the component.
+The current dataset contains **62 resources across 13 broad career categories**. Counts shown in the interface are derived from [`app/data/resources.ts`](app/data/resources.ts), not duplicated in the component.
 
 ## Directory and discovery
 
@@ -13,6 +13,14 @@ The current dataset contains **61 resources across 13 broad career categories**.
 **Why it exists:** A student can begin with a broad direction without already knowing a job title or specialist website.
 
 The current categories are Technology; Business; Finance & Risk; Healthcare; Engineering; Science & Research; Supply Chain & Operations; Marketing & Communications; Design & Creative; Government, Law & Policy; Education; Human Services & Nonprofit; and General / Any Major.
+
+### College-year browsing
+
+**What it does:** Offers Freshman, Sophomore, Junior, Senior, and New Grad controls, plus “All years” in the library. A selected year narrows the catalog to destinations marked as especially useful for that audience and combines with career path and text search.
+
+**What it does not do:** It does not claim that every listing on a destination accepts that year. The optional `recommendedForYears` metadata is resource-level editorial guidance, and students are reminded to confirm eligibility on the original source.
+
+**Why it exists:** Students can find more relevant places to search without turning the directory into a job board or pretending to have job-level eligibility data. The catalog includes Underclassmen Opportunities as a Technology resource specifically recommended for freshmen and sophomores.
 
 ### Resource cards
 
@@ -28,7 +36,7 @@ The current categories are Technology; Business; Finance & Risk; Healthcare; Eng
 
 ### Progressive disclosure
 
-**What it does:** The unfiltered library initially renders the first 12 resources and offers a button to show all 61. A search or category selection displays all matching results immediately.
+**What it does:** The unfiltered library initially renders the first 12 resources and offers a button to show all 62. A search, category selection, or college-year selection displays all matching results immediately.
 
 **Why it exists:** The first visit remains approachable while the complete directory is still one action away.
 
@@ -38,7 +46,7 @@ The current categories are Technology; Business; Finance & Risk; Healthcare; Eng
 
 **What it does:** Searches a normalized index of each resource's name, description, format, tags, `bestFor` text, and `searchTerms`. Search is case-insensitive and preserves useful characters such as `+`, `#`, and `/`.
 
-Direct resource matches are returned first. Only when there are no direct matches does search fall back to category labels, short labels, and category keywords. One- and two-character alphanumeric searches, such as `AI`, `IT`, `PR`, and `HR`, require whole-token matches instead of matching arbitrary substrings.
+Career category and college year first scope the resource set. Within that scope, direct resource matches are returned first. Only when there are no direct matches does search fall back to category labels, short labels, and category keywords. One- and two-character alphanumeric searches, such as `AI`, `IT`, `PR`, and `HR`, require whole-token matches instead of matching arbitrary substrings.
 
 **Why it exists:** A specific query should surface specialist destinations rather than expanding to every resource in a broad category. Category fallback still provides a useful path for broader terms.
 
@@ -46,13 +54,13 @@ See [`RESOURCE_GUIDE.md`](RESOURCE_GUIDE.md) for the indexing and curation rules
 
 ### Category filters
 
-**What they do:** Provide an “All” option and one filter for each category. Search and category filters can be used together. The selected filter uses both a visual active treatment and `aria-pressed` state.
+**What they do:** Provide an “All paths” option and one filter for each category. Search, category, and college-year filters can be used together. Selected filters use both a visual active treatment and `aria-pressed` state.
 
 **Why they exist:** Students can narrow a search without the complexity of multiple faceted-filter panels.
 
 ### Result feedback and recovery
 
-**What it does:** Announces result totals through a polite live region, names the active category and query, and provides clear-search and clear-filter actions. A zero-result state suggests broader terms and offers a reset.
+**What it does:** Announces result totals through a polite live region, names the active category, college year, and query, and provides clear-search and clear-filter actions. A zero-result state suggests broader terms and offers a reset.
 
 **Why it exists:** Every change has visible feedback, and an unsuccessful query is never a dead end.
 
@@ -92,7 +100,7 @@ See [`RESOURCE_GUIDE.md`](RESOURCE_GUIDE.md) for the indexing and curation rules
 
 ### Lightweight motion and reduced motion
 
-**What it does:** Adds slow pinwheel rotation, drifting clouds and swirls, tree sway, target breathing, path-dot movement, and short control transitions. A `prefers-reduced-motion: reduce` media query effectively disables animation, transitions, and smooth scrolling. Category-card scrolling also checks the preference in JavaScript.
+**What it does:** Adds slow pinwheel rotation, drifting clouds and swirls, tree sway, target breathing, path-dot movement, and short control transitions. A `prefers-reduced-motion: reduce` media query effectively disables animation, transitions, and smooth scrolling. Career-path and college-year card scrolling also checks the preference in JavaScript.
 
 **Why it exists:** Motion gives the illustrated world life without carrying information or blocking use. Students who request less motion receive a stable experience.
 
@@ -130,6 +138,7 @@ The current product intentionally does not include:
 
 - hosted or copied job listings;
 - job scraping or automatic resource ingestion;
+- job-level college-year eligibility claims or guarantees;
 - accounts, authentication, profiles, or employer portals;
 - favorites, browser storage, saved searches, or application tracking;
 - resumes, application forms, or document storage;

@@ -14,9 +14,9 @@ flowchart TD
     Router --> Page["app/page.tsx"]
     Page --> Guide["app/CareerGuide.tsx<br/>server-rendered, then hydrated"]
 
-    Data["app/data/resources.ts<br/>categories + resources"] --> Guide
+    Data["app/data/resources.ts<br/>categories + college years + resources"] --> Guide
     Data --> Indexes["normalized resource and category indexes"]
-    Indexes --> Derived["query + category + show-all state"]
+    Indexes --> Derived["query + category + college year + show-all state"]
     Derived --> Cards["derived visible resource cards"]
     Cards --> External["authored external destination"]
 
@@ -84,7 +84,7 @@ The product intentionally keeps closely related UI in `app/CareerGuide.tsx` rath
 
 | Unit | Role |
 | --- | --- |
-| `CareerGuide` | Owns client state and renders the complete page: header, hero, guidance, featured resources, career paths, library, tips, about section, footer, and suggestion dialog. |
+| `CareerGuide` | Owns client state and renders the complete page: header, hero, guidance, featured resources, career paths, college-year browsing, library, tips, about section, footer, and suggestion dialog. |
 | `ResourceCard` | Renders both featured and regular resource records, including format, cadence, description, best-for content, tags, notes, and external action. |
 | `CategoryMark` | Maps controlled category icon names to CSS-styled text marks. |
 | `Pinwheel` | Decorative, CSS-animated pinwheel with a configurable spin duration. |
@@ -100,6 +100,7 @@ The remaining scene elements are local decorative spans. Keeping them with the p
 - the `CategoryIcon` union and `CategoryMetadata` interface;
 - the ordered `categories` array;
 - `categoryById`, used for active-filter result copy;
+- the five-value `collegeYearIds` tuple (`freshman`, `sophomore`, `junior`, `senior`, `new-grad`), its `CollegeYearId` union, the visible/audience metadata in `collegeYears`, and `collegeYearById`;
 - the ordered `resourceIds` tuple and `ResourceId` union;
 - controlled `ResourceFormat` and `ResourceTag` unions;
 - the `Resource` interface;
@@ -107,9 +108,9 @@ The remaining scene elements are local decorative spans. Keeping them with the p
 - `featuredResources`, derived by filtering `featured === true`;
 - `getResourcesByCategory()`, an exported helper not currently called by the page.
 
-The data uses `readonly` contracts and `as const satisfies` to preserve literal values while checking record shape. `resourceIds` and the `resources` array are separately authored; the tests require them to contain the same IDs in the same order.
+The data uses `readonly` contracts and `as const satisfies` to preserve literal values while checking record shape. `resourceIds` and the `resources` array are separately authored; the tests require them to contain the same IDs in the same order. A resource may have `recommendedForYears`, which means the destination is an especially useful starting point for those students; it does not assert job-level eligibility.
 
-At present there are 13 categories and 61 resources. Counts shown in the hero, category cards, results copy, and show-all button are derived from the arrays rather than duplicated constants.
+At present there are 13 categories and 62 resources. The added Underclassmen Opportunities record is a non-featured Technology resource recommended for freshmen and sophomores. Counts shown in the hero, category cards, year controls, results copy, and show-all button are derived from the arrays rather than duplicated constants.
 
 For schema and editorial rules, see [RESOURCE_GUIDE.md](RESOURCE_GUIDE.md).
 
@@ -120,7 +121,8 @@ Search is synchronous and entirely in memory.
 ```mermaid
 flowchart LR
     Query["query"] --> Normalize["lowercase + normalize punctuation"]
-    Category["activeCategory"] --> Scope["resources in selected category"]
+    Category["activeCategory"] --> Scope["resources in selected category + college year"]
+    Year["activeCollegeYear"] --> Scope
     Scope --> Direct["match resource search index"]
     Normalize --> Direct
     Direct -->|"one or more matches"| Results["filteredResources"]
@@ -144,26 +146,27 @@ Normalization lowercases text, replaces characters other than letters, numbers, 
 
 ### Matching rules
 
-1. The active category scopes the available resources.
-2. An empty query returns that complete category scope.
-3. Nonempty queries try the resource index first.
+1. The active category and college year scope the available resources; an active year includes only records whose optional `recommendedForYears` contains that year.
+2. An empty query returns that complete combined scope.
+3. Nonempty queries try the resource index within that scope first.
 4. Queries consisting of one or two alphanumeric characters use whole-token matching. This prevents `AI`, `IT`, `PR`, or `HR` from matching unrelated words that merely contain those letters.
 5. Longer queries use normalized substring matching.
-6. Only when there are zero direct resource matches does the search identify matching categories and return resources belonging to them.
+6. Only when there are zero direct resource matches does the search identify matching categories and return resources belonging to them within the same college-year scope.
 
 The direct-match-first behavior is important. A specialist query such as “healthcare management” should surface relevant specialist destinations, not every Healthcare resource merely because the same phrase is a category keyword.
 
 ### State and derived output
 
-`CareerGuide` has three pieces of state:
+`CareerGuide` has four pieces of state:
 
 - `query: string`;
 - `activeCategory: "all" | CategoryId`;
+- `activeCollegeYear: "all" | CollegeYearId`;
 - `showAllResources: boolean`.
 
-`filteredResources` is memoized from `query` and `activeCategory`. `visibleResources` applies the default first-12 limit only when there is no query and no active category. Changing the query or filter resets `showAllResources`.
+`filteredResources` is memoized from `query`, `activeCategory`, and `activeCollegeYear`. Category and year scope are applied before the unchanged direct-resource/fallback-category query logic. `visibleResources` applies the default first-12 limit only when there is no query, active category, or active year. Changing the query or either filter resets `showAllResources`.
 
-Selecting a large career-path card also scrolls to the library and focuses the search input. That scroll uses `auto` instead of `smooth` when the visitor prefers reduced motion.
+Selecting a large career-path or college-year card also scrolls to the library and focuses the search input. That scroll uses `auto` instead of `smooth` when the visitor prefers reduced motion.
 
 ## Persistence and backend boundaries
 
@@ -219,7 +222,7 @@ The design is responsive rather than route- or device-specific: grids collapse, 
 
 - The product's value is editorial curation and findability, not data transactions.
 - One typed module is easier to review than a database-backed administration system for the current catalog size.
-- Client-side search is immediate and inexpensive for 61 records.
+- Client-side search is immediate and inexpensive for 62 records.
 - Derived views prevent counts and featured lists from drifting away from source data.
 - Server-rendered initial HTML preserves content and metadata while one client component supplies the necessary interactivity.
 - A stateless Worker keeps deployment compatible with the existing Sites/Vinext build without inventing storage needs.
