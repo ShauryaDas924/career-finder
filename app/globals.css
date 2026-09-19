@@ -776,6 +776,7 @@ p {
 .start-section,
 .featured-section,
 .category-section,
+.year-section,
 .library-section,
 .tips-section,
 .about-section {
@@ -828,6 +829,7 @@ p {
 
 .start-card h2,
 .section-heading h2,
+.year-panel h2,
 .library-heading h2,
 .tips-board h2,
 .about-card h2 {
@@ -1330,6 +1332,128 @@ p {
   transform: translateX(4px);
 }
 
+.year-section {
+  padding: 82px 0 88px;
+  background: var(--cream);
+}
+
+.year-panel {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(260px, 0.72fr) minmax(0, 1.28fr);
+  align-items: center;
+  gap: 42px;
+  padding: 36px;
+  border: 2px solid var(--navy);
+  border-radius: var(--radius-lg);
+  background: var(--paper);
+  box-shadow: var(--shadow);
+}
+
+.year-panel::before {
+  position: absolute;
+  right: 36px;
+  top: -15px;
+  width: 74px;
+  height: 28px;
+  background: rgba(201, 188, 237, 0.76);
+  content: "";
+  transform: rotate(3deg);
+}
+
+.year-panel h2 {
+  margin-bottom: 14px;
+}
+
+.year-panel__copy > p:last-child {
+  max-width: 430px;
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+.year-browse-group {
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.year-browse-group legend {
+  margin-bottom: 10px;
+  color: var(--navy-2);
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.year-browse-list {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.year-browse-list button {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 98px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 5px;
+  padding: 15px 13px;
+  border: 1.5px solid var(--navy);
+  border-radius: 16px;
+  background: var(--sky-pale);
+  text-align: left;
+  box-shadow: 3px 4px 0 rgba(24, 53, 83, 0.12);
+  transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
+}
+
+.year-browse-list button[data-tone="2"] { background: var(--mint-pale); }
+.year-browse-list button[data-tone="3"] { background: var(--lavender-pale); }
+.year-browse-list button[data-tone="4"] { background: #fff1c8; }
+.year-browse-list button[data-tone="5"] { background: var(--pink-pale); }
+
+.year-browse-list button:hover {
+  transform: translateY(-3px);
+  box-shadow: 4px 6px 0 rgba(24, 53, 83, 0.15);
+}
+
+.year-browse-list button.is-active {
+  background: var(--navy);
+  color: var(--cream);
+  box-shadow: 3px 4px 0 var(--coral);
+}
+
+.year-browse-list button.is-active::after {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  content: "✓";
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.year-browse-list b {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  line-height: 1.05;
+}
+
+.year-browse-list span {
+  color: var(--muted);
+  font-size: 0.61rem;
+  font-weight: 800;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+
+.year-browse-list button.is-active span {
+  color: var(--cream);
+}
+
 .library-section {
   padding: 100px 0 112px;
   background: var(--sky-pale);
@@ -1357,6 +1481,13 @@ p {
   min-width: 0;
   flex-direction: column;
   gap: 8px;
+}
+
+.filter-stack {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .filter-group {
@@ -1991,6 +2122,12 @@ p {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .year-panel {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 28px;
+  }
+
   .footer-content {
     grid-template-columns: 0.8fr 1.2fr;
   }
@@ -2124,6 +2261,10 @@ p {
 
   .category-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .year-browse-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .explorer-panel {
@@ -2277,6 +2418,7 @@ p {
   .start-section,
   .featured-section,
   .category-section,
+  .year-section,
   .library-section,
   .tips-section {
     padding-block: 70px;
@@ -2289,6 +2431,7 @@ p {
 
   .start-card h2,
   .section-heading h2,
+  .year-panel h2,
   .library-heading h2,
   .tips-board h2 {
     font-size: clamp(2.15rem, 11vw, 3rem);
@@ -2324,6 +2467,18 @@ p {
   .category-card {
     min-height: 154px;
     padding: 17px;
+  }
+
+  .year-panel {
+    padding: 29px 20px;
+  }
+
+  .year-browse-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .year-browse-list button {
+    min-height: 78px;
   }
 
   .category-mark {
@@ -2452,6 +2607,7 @@ p {
   .hero__sky,
   .hero__ground,
   .category-ribbon,
+  .year-section,
   .explorer-panel,
   .site-footer,
   .button,

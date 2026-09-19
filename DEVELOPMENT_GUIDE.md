@@ -46,7 +46,7 @@ Use the local URL printed by the command. The script writes Wrangler diagnostics
 
 - `app/page.tsx` defines the single route and renders `CareerGuide`.
 - `app/CareerGuide.tsx` owns the interactive UI, search/filter state, cards, illustrated markup, and dialog.
-- `app/data/resources.ts` is the authoritative category and resource dataset.
+- `app/data/resources.ts` is the authoritative category, college-year, and resource dataset.
 - `app/globals.css` contains design tokens, layout, component styles, illustrations, breakpoints, keyframes, reduced-motion behavior, and print rules.
 - `app/layout.tsx` owns document metadata, the favicon, the social preview, viewport settings, and the root language.
 - `worker/index.ts` is the Cloudflare Worker entry point used by vinext.
@@ -64,9 +64,10 @@ Follow [RESOURCE_GUIDE.md](./RESOURCE_GUIDE.md) for the full curation checklist.
 2. Add the corresponding object to `resources`.
 3. Use an existing `CategoryId`, `ResourceFormat`, and `ResourceTag` when they fit. Extend those unions only when the new value represents a genuine new concept.
 4. Add specific majors, roles, abbreviations, and aliases to `searchTerms`.
-5. Verify the destination and every claim shown to students.
-6. Update intentional assertions in `tests/rendered-html.test.mjs`, including the resource count if it changed.
-7. Run the validation workflow below.
+5. Add optional `recommendedForYears` values only when there is a reasonable editorial basis that the destination is especially useful for those students. This metadata describes the resource, not eligibility for every opportunity it links to.
+6. Verify the destination and every claim shown to students.
+7. Update intentional assertions in `tests/rendered-html.test.mjs`, including the resource count and year-aware expectations if they changed.
+8. Run the validation workflow below.
 
 Resource order matters: the default library displays the first 12 records until the user expands it.
 
@@ -89,13 +90,18 @@ Broad categories are intentional; do not add one for every major. If a new top-l
 
 Use `searchTerms` on a resource for majors, role names, industry vocabulary, and common aliases that should return that resource directly. Use category `keywords` only for broad terms that should fall back to a whole category.
 
-The current search order is deliberate:
+The current filtering and search order is deliberate:
 
-1. Normalize the query and searchable resource text.
-2. Return direct resource matches when any exist.
-3. Only when there are no direct matches, match category labels and keywords and return resources in those categories.
+1. Scope the catalog by the active career category and optional college year.
+2. Normalize the query and searchable resource text.
+3. Return direct resource matches from that scoped set when any exist.
+4. Only when there are no direct matches, match category labels and keywords and return resources in those categories from the same scoped set.
 
 One- and two-character alphanumeric queries use whole-token matching. This prevents `AI`, `IT`, `PR`, and `HR` from matching arbitrary substrings. If the search algorithm changes, update the mirrored helper and assertions in `tests/rendered-html.test.mjs` in the same change.
+
+### Add or revise college-year guidance
+
+Use only the controlled IDs in `collegeYearIds`. `recommendedForYears` is optional: omitting it means the resource is not included in a year-specific view, not that students in those years are ineligible to use it. Base assignments on verified destination scope and resource usefulness, avoid padding a year with weak matches, and keep student-facing language clear that eligibility varies by individual opportunity. Update the intentional year-assignment and composed-filter tests when editorial guidance changes.
 
 ### Mark a resource as featured
 
@@ -112,7 +118,7 @@ Keep decorative pieces `aria-hidden="true"` and non-interactive. Check all three
 
 ### Edit motion
 
-Continuous motion is defined through the keyframes near the end of `app/globals.css`. Component-level durations are attached to the pinwheel classes and the `speed` custom property. Category-card navigation in `app/CareerGuide.tsx` also checks `prefers-reduced-motion` before requesting smooth scrolling.
+Continuous motion is defined through the keyframes near the end of `app/globals.css`. Component-level durations are attached to the pinwheel classes and the `speed` custom property. Career-path and college-year card navigation in `app/CareerGuide.tsx` also checks `prefers-reduced-motion` before requesting smooth scrolling.
 
 Every new transition or animation must remain understandable when the reduced-motion media query collapses its duration. Do not add motion that communicates required information by itself.
 
@@ -133,6 +139,6 @@ Tests live in `tests/rendered-html.test.mjs` and use Node's built-in test runner
 5. Run `npm test`.
 6. If source changed after the test build, run `npm run build`.
 7. If UI, styling, copy length, interaction, or animation changed, inspect desktop and mobile behavior manually.
-8. Recheck documentation when commands, architecture, resource schema, privacy posture, or deployment behavior changed.
+8. Recheck documentation when commands, architecture, resource schema, privacy posture, or deployment behavior changed. Adding the in-memory college-year filter did not change the privacy posture.
 
 The product should remain a curated map to external career resources, not become a job board or a general career-management platform.

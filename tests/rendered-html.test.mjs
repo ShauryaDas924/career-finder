@@ -96,16 +96,18 @@ function buildSearch({ categories, resources }) {
       : normalizedIndex.includes(normalizedQuery);
   };
 
-  return (query, activeCategory = "all") => {
+  return (query, activeCategory = "all", activeCollegeYear = "all") => {
     const normalizedQuery = normalizeSearchText(query);
-    const resourcesInCategory = resources.filter(
+    const resourcesInScope = resources.filter(
       (resource) =>
-        activeCategory === "all" || resource.categories.includes(activeCategory),
+        (activeCategory === "all" || resource.categories.includes(activeCategory)) &&
+        (activeCollegeYear === "all" ||
+          resource.recommendedForYears?.includes(activeCollegeYear)),
     );
 
-    if (!normalizedQuery) return resourcesInCategory;
+    if (!normalizedQuery) return resourcesInScope;
 
-    const directMatches = resourcesInCategory.filter((resource) =>
+    const directMatches = resourcesInScope.filter((resource) =>
       matchesSearchText(searchIndex.get(resource.id) ?? "", normalizedQuery),
     );
 
@@ -122,7 +124,7 @@ function buildSearch({ categories, resources }) {
         .map((category) => category.id),
     );
 
-    return resourcesInCategory.filter((resource) =>
+    return resourcesInScope.filter((resource) =>
       resource.categories.some((categoryId) => fallbackCategories.has(categoryId)),
     );
   };
@@ -145,13 +147,30 @@ test("resource data remains complete, unique, and internally consistent", async 
   const {
     categories,
     categoryIds,
+    collegeYearIds,
+    collegeYears,
     featuredResources,
     resources,
     resourceIds,
   } = await loadResourceData();
 
   assert.equal(categories.length, 13);
-  assert.equal(resources.length, 61);
+  assert.equal(resources.length, 62);
+  assert.deepEqual(collegeYearIds, [
+    "freshman",
+    "sophomore",
+    "junior",
+    "senior",
+    "new-grad",
+  ]);
+  assert.deepEqual(
+    collegeYears.map(({ id }) => id),
+    collegeYearIds,
+  );
+  assert.deepEqual(
+    collegeYears.map(({ label }) => label),
+    ["Freshman", "Sophomore", "Junior", "Senior", "New Grad"],
+  );
   assert.equal(new Set(categories.map(({ id }) => id)).size, categories.length);
   assert.equal(new Set(resources.map(({ id }) => id)).size, resources.length);
   assert.equal(new Set(resources.map(({ url }) => url)).size, resources.length);
@@ -160,6 +179,7 @@ test("resource data remains complete, unique, and internally consistent", async 
   assert.deepEqual(resourceIds, resources.map(({ id }) => id));
 
   const knownCategoryIds = new Set(categoryIds);
+  const knownCollegeYearIds = new Set(collegeYearIds);
   for (const resource of resources) {
     assert.match(resource.url, /^https:\/\/[^\s]+$/i, `${resource.id} must use HTTPS`);
     assert.doesNotThrow(() => new URL(resource.url), `${resource.id} must have a valid URL`);
@@ -170,6 +190,19 @@ test("resource data remains complete, unique, and internally consistent", async 
     assert.ok(resource.tags.length > 0, `${resource.id} must have at least one tag`);
     assert.ok(resource.tags.length <= 5, `${resource.id} must have no more than five tags`);
 
+    const recommendedForYears = resource.recommendedForYears ?? [];
+    assert.equal(
+      new Set(recommendedForYears).size,
+      recommendedForYears.length,
+      `${resource.id} must not repeat a college year`,
+    );
+    for (const collegeYearId of recommendedForYears) {
+      assert.ok(
+        knownCollegeYearIds.has(collegeYearId),
+        `${resource.id} uses unknown college year ${collegeYearId}`,
+      );
+    }
+
     for (const categoryId of resource.categories) {
       assert.ok(knownCategoryIds.has(categoryId), `${resource.id} uses unknown category ${categoryId}`);
     }
@@ -179,6 +212,15 @@ test("resource data remains complete, unique, and internally consistent", async 
     assert.ok(
       resources.some((resource) => resource.categories.includes(category.id)),
       `${category.label} must retain at least one resource`,
+    );
+  }
+
+  for (const collegeYear of collegeYears) {
+    assert.ok(
+      resources.some((resource) =>
+        resource.recommendedForYears?.includes(collegeYear.id),
+      ),
+      `${collegeYear.label} must retain at least one recommended resource`,
     );
   }
 
@@ -201,6 +243,33 @@ test("resource data remains complete, unique, and internally consistent", async 
   assert.equal(jobrightResources.length, 1);
   assert.equal(jobrightResources[0].url, "https://jobright.ai/");
   assert.equal(jobrightResources[0].featured, true);
+
+  const expectedYearAssignments = new Map([
+    ["handshake", collegeYearIds],
+    ["underclassmen-opportunities", ["freshman", "sophomore"]],
+    ["simplify", ["junior", "senior", "new-grad"]],
+    ["parker-dewey", collegeYearIds],
+    ["ache-administrative-fellowships", ["new-grad"]],
+  ]);
+  for (const [resourceId, expectedYears] of expectedYearAssignments) {
+    const resource = resources.find(({ id }) => id === resourceId);
+    assert.deepEqual(
+      resource?.recommendedForYears,
+      expectedYears,
+      `${resourceId} should retain its intentional college-year guidance`,
+    );
+  }
+
+  const underclassmenResources = resources.filter(
+    ({ name }) => name === "Underclassmen Opportunities",
+  );
+  assert.equal(underclassmenResources.length, 1);
+  assert.equal(
+    underclassmenResources[0].url,
+    "https://github.com/Jose-Gael-Cruz-Lopez/underclassmen-opportunities",
+  );
+  assert.deepEqual(underclassmenResources[0].categories, ["technology"]);
+  assert.equal(underclassmenResources[0].featured, false);
 });
 
 test("search covers the addendum's majors and career directions", async () => {
@@ -272,6 +341,69 @@ test("search covers the addendum's majors and career directions", async () => {
   const civilEngineeringIds = new Set(search("civil engineering").map(({ id }) => id));
   assert.ok(civilEngineeringIds.has("asce-career-connections"));
   assert.ok(civilEngineeringIds.has("cmaa-career-hq"));
+});
+
+test("college-year guidance composes with category and text search", async () => {
+  const data = await loadResourceData();
+  const search = buildSearch(data);
+
+  assert.equal(search("", "all", "all").length, data.resources.length);
+
+  const technologySophomoreResults = search("", "technology", "sophomore");
+  assert.deepEqual(
+    technologySophomoreResults.map(({ id }) => id),
+    ["underclassmen-opportunities"],
+  );
+
+  const sophomoreResearchResults = search("research", "all", "sophomore");
+  assert.ok(
+    sophomoreResearchResults.some(({ id }) => id === "nsf-reu"),
+    "a query plus college year should retain a strong sophomore research resource",
+  );
+  assert.ok(
+    sophomoreResearchResults.every((resource) =>
+      resource.recommendedForYears?.includes("sophomore"),
+    ),
+  );
+
+  const combinedResults = search(
+    "underclassmen",
+    "technology",
+    "sophomore",
+  );
+  assert.deepEqual(combinedResults.map(({ id }) => id), [
+    "underclassmen-opportunities",
+  ]);
+  assert.ok(
+    combinedResults.every(
+      (resource) =>
+        resource.categories.includes("technology") &&
+        resource.recommendedForYears?.includes("sophomore"),
+    ),
+  );
+
+  const newGradHealthcareResults = search(
+    "public health",
+    "healthcare",
+    "new-grad",
+  );
+  assert.ok(
+    newGradHealthcareResults.some(({ id }) => id === "orise-zintellect"),
+    "category, query, and college year should compose without bypassing direct matches",
+  );
+  assert.ok(
+    newGradHealthcareResults.every(
+      (resource) =>
+        resource.categories.includes("healthcare") &&
+        resource.recommendedForYears?.includes("new-grad"),
+    ),
+  );
+
+  assert.equal(
+    search("underclassmen", "technology", "junior").length,
+    0,
+    "year guidance should exclude resources not recommended for the selected year",
+  );
 });
 
 test("healthcare is visible and supports administration, operations, and care paths", async () => {
@@ -360,10 +492,12 @@ test("the production page server-renders its content and metadata", async () => 
     "Not sure where to start?",
     "Great places to start",
     "Browse by career path",
+    "Browse by college year",
+    "Find resources especially useful for your current year. Eligibility varies by opportunity, so always confirm details on the original source.",
     "Find a useful place to look",
     "A few things worth remembering",
     "Was bored lol so I made this",
-    "Show all 61 resources",
+    "Show all 62 resources",
   ]) {
     assert.ok(text.includes(phrase), `server-rendered page should include “${phrase}”`);
   }
@@ -371,11 +505,39 @@ test("the production page server-renders its content and metadata", async () => 
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/i);
   assert.doesNotMatch(text, /Your site is taking shape|Building your site/i);
 
+  for (const label of [
+    "All years",
+    "Freshman",
+    "Sophomore",
+    "Junior",
+    "Senior",
+    "New Grad",
+  ]) {
+    assert.ok(text.includes(label), `college-year controls should include “${label}”`);
+  }
+  for (const [audience, count] of [
+    ["Freshmen", 11],
+    ["Sophomores", 12],
+    ["Juniors", 13],
+    ["Seniors", 17],
+    ["New Grads", 14],
+  ]) {
+    assert.ok(
+      html.includes(
+        `aria-label="Show resources especially useful for ${audience}, ${count} resources"`,
+      ),
+      `${audience} browse control should expose its derived count`,
+    );
+  }
+  assert.match(
+    html,
+    /<button\b(?=[^>]*\baria-pressed="true")[^>]*>\s*All years\s*<\/button>/i,
+  );
+
   assert.match(
     html,
     /<a\b(?=[^>]*\bhref="https:\/\/jobright\.ai\/")(?=[^>]*\btarget="_blank")(?=[^>]*\brel="(?=[^"]*\bnoopener\b)(?=[^"]*\bnoreferrer\b)[^"]*")[^>]*>/i,
   );
-
   const newTabLinks = html.match(/<a\b(?=[^>]*\btarget="_blank")[^>]*>/gi) ?? [];
   assert.ok(newTabLinks.length >= 4, "resource links should render on the server");
   for (const link of newTabLinks) {

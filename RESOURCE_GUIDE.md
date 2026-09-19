@@ -2,7 +2,7 @@
 
 [`app/data/resources.ts`](app/data/resources.ts) is the authoritative source for the taxonomy, resource inventory, search aliases, and featured selection. The interface derives category counts, search results, filters, and featured cards from this file.
 
-Current source inventory: **61 unique resources**, **13 visible categories**, and **5 featured starting points**. A resource can belong to more than one category, so category totals intentionally add up to more than 61.
+Current source inventory: **62 unique resources**, **13 visible categories**, **5 college-year choices**, and **5 featured starting points**. A resource can belong to more than one category, so category totals intentionally add up to more than 62.
 
 ## Curation principles
 
@@ -30,7 +30,7 @@ Every card should answer “Why would a student open this?” The directory is d
 
 | Category ID | Visible label | Resources |
 | --- | --- | ---: |
-| `technology` | Technology | 10 |
+| `technology` | Technology | 11 |
 | `business` | Business | 18 |
 | `finance-risk` | Finance & Risk | 8 |
 | `healthcare` | Healthcare | 12 |
@@ -61,7 +61,8 @@ The `Resource` interface is read-only and uses closed TypeScript unions for IDs,
 | `tags` | Yes | One to five values from `ResourceTag` | Visible scan labels and direct search terms | `["NURSING", "CLINICAL", "HEALTHCARE", "EARLY CAREER"]` |
 | `format` | Yes | One `ResourceFormat` literal | Visible source type and compact format mark | `"Professional association job board"` |
 | `featured` | Yes | Boolean | Includes a resource in the five-card starting section when `true` | `false` |
-| `searchTerms` | No in the type; present on all 61 current resources | Array of specific majors, roles, abbreviations, and aliases | Improves direct search without crowding the card | `["registered nurse", "RN"]` |
+| `recommendedForYears` | No | Array of `CollegeYearId` values for which the destination is an especially useful starting point | Powers Browse by College Year; this is editorial resource guidance, not job-level eligibility | `["freshman", "sophomore"]` |
+| `searchTerms` | No in the type; present on all 62 current resources | Array of specific majors, roles, abbreviations, and aliases | Improves direct search without crowding the card | `["registered nurse", "RN"]` |
 | `updateFrequency` | No | Short claim that has been specifically verified | Shows an update badge | `"Updated daily"` |
 | `notes` | No | Concise qualification, limitation, or useful caveat | Sets accurate expectations below the card | Eligibility or audience note |
 
@@ -97,6 +98,20 @@ Each entry in `categories` conforms to `CategoryMetadata`:
 
 The parallel `categoryIds` and `resourceIds` arrays intentionally create literal unions. When adding an ID, update its registry and its corresponding object together. Tests assert that registry order matches data order.
 
+### College-year metadata
+
+`collegeYearIds` is the closed source of truth for the Browse by College Year controls. Its current IDs, in display order, are:
+
+- `freshman`
+- `sophomore`
+- `junior`
+- `senior`
+- `new-grad`
+
+Each ID has a corresponding `CollegeYearMetadata` entry with a visible singular `label` and a plural `audienceLabel` used in accessible names and result status text. Keep `collegeYearIds` and `collegeYears` aligned and preserve these stable IDs when changing display copy.
+
+`recommendedForYears` is deliberately optional on a resource. Add it only when the destination is an especially useful starting point for that audience. It does **not** assert that every listing on that destination accepts, excludes, or guarantees eligibility for that college year. Students must confirm eligibility on the original opportunity page. Leaving the field out means the resource is not included when a college-year filter is active; it does not mean the resource is unusable or ineligible.
+
 ## Broad categories, deep search terms
 
 Do not create a top-level category for every major. Keep the visible taxonomy broad and make specialist resources discoverable with precise resource-level aliases.
@@ -121,16 +136,18 @@ Use category `keywords` for broad concepts that reasonably describe the entire c
 
 Search behavior lives in [`app/CareerGuide.tsx`](app/CareerGuide.tsx):
 
-1. The selected category is applied first, or all resources are used.
+1. The selected category and college year are applied first. A selected year retains only resources whose `recommendedForYears` includes that year; “All paths” and “All years” leave their respective dimensions unrestricted.
 2. The query is lowercased, most punctuation becomes spaces, and `+`, `#`, and `/` are retained.
-3. A direct resource index searches `name`, `description`, `format`, `tags`, `bestFor`, and `searchTerms`.
+3. A direct resource index searches `name`, `description`, `format`, `tags`, `bestFor`, and `searchTerms` within the category-and-year scope.
 4. If at least one resource matches directly, only those specialist matches are returned.
-5. If no resource matches, category `label`, `shortLabel`, and `keywords` are searched; resources from matching categories are returned.
+5. If no resource matches, category `label`, `shortLabel`, and `keywords` are searched; resources from matching categories are returned only when they also remain in the selected category-and-year scope.
 6. One- or two-character alphanumeric queries require whole-token matches. This keeps `AI`, `IT`, `PR`, and `HR` from matching letters embedded inside unrelated words.
 
 This fallback order is intentional. A precise query such as `nursing` should reach the ANA Career Center instead of automatically returning every Healthcare resource.
 
 Resources keep their source-array order. That order controls the first 12 cards in the default library and the order of filtered results; there is no score-based ranking.
+
+The Browse by College Year and career-path panels derive each visible count from the dataset after applying the other active dimensions, so a card's count matches the result it will produce. Choosing a year applies that same year in the library, collapses the expanded list, scrolls to the library, and focuses search. The library's category, year, and query controls compose rather than replacing one another. Its live status names the active category, year audience, and query as applicable. “Clear filters” restores the query, category, year, collapsed first-12 state, and search focus to the default view; the empty-state “Show every resource” action resets the same filters but intentionally expands the full catalog.
 
 ## Featured resources
 
@@ -154,10 +171,11 @@ Keep the featured set small and broad. Mark a specialist resource as featured on
 6. Write a factual description and two or three concrete `bestFor` statements.
 7. Select one to five existing tags.
 8. Add specific roles, majors, abbreviations, and search aliases to `searchTerms`.
-9. Leave `updateFrequency` and `notes` out unless they add verified value.
-10. Keep `featured: false` unless the shortlist is intentionally changing.
-11. Run `npm test`, `npm run lint`, `npx tsc --noEmit`, and `npm run build`. Update exact-count or coverage assertions only when the dataset change is deliberate.
-12. Manually try the important new search phrases and open the external link.
+9. Add `recommendedForYears` only when editorial review supports the resource's usefulness for those audiences; do not infer job eligibility from the destination's general audience.
+10. Leave `updateFrequency` and `notes` out unless they add verified value.
+11. Keep `featured: false` unless the shortlist is intentionally changing.
+12. Run `npm test`, `npm run lint`, `npx tsc --noEmit`, and `npm run build`. Update exact-count or coverage assertions only when the dataset change is deliberate.
+13. Manually try the important new search phrases, combine any assigned college years with relevant categories and queries, and open the external link.
 
 An illustrative object uses the same structure as the production array. Replace every placeholder with verified information, and add the chosen ID to `resourceIds` first:
 
@@ -176,6 +194,7 @@ An illustrative object uses the same structure as the production array. Replace 
   tags: ["HEALTHCARE", "ADMINISTRATION", "EARLY CAREER"],
   format: "Professional association job board",
   featured: false,
+  recommendedForYears: ["senior", "new-grad"],
   searchTerms: [
     "healthcare management",
     "healthcare administration",
@@ -194,6 +213,7 @@ The example is a schema template, not a current resource or endorsement.
 - Remove both the record and its `resourceIds` literal when removing a resource.
 - Check whether a URL replacement creates a duplicate.
 - After category changes, verify category-card counts and filtered results.
+- After college-year changes, verify the Browse by College Year count, the matching library filter, the live result status, and combinations with category and text search.
 - After alias changes, test the specific query and nearby short queries for unintended matches.
 
 ## Verification checklist
@@ -208,6 +228,7 @@ Before accepting a new or changed resource, confirm:
 - **Usefulness:** the destination adds a field, opportunity type, or workflow not already served well.
 - **Search:** important majors, roles, and abbreviations find the specialist resource directly.
 - **Categories:** assignments are broad, defensible, and not added merely to increase exposure.
+- **College years:** each `recommendedForYears` assignment reflects editorial usefulness, uses a known ID, and is never presented as opportunity-level eligibility.
 - **External behavior:** the link opens the intended page and the site's own eligibility and privacy terms remain clear.
 
-The automated suite checks HTTPS shape, URL parseability, duplicate IDs and URLs, required fields, tag limits, category validity, category coverage, featured IDs, and required searches. It does **not** make live network requests, so editorial URL verification remains a manual responsibility.
+The automated suite checks HTTPS shape, URL parseability, duplicate IDs and URLs, required fields, tag limits, category validity, category coverage, the five college-year IDs and labels, valid nonrepeating year assignments, at least one recommended resource per year, intentional sample assignments, featured IDs, required searches, and category + year + query composition. It does **not** make live network requests or judge whether an editorial year recommendation remains useful, so both URL and year-guidance verification remain manual responsibilities.

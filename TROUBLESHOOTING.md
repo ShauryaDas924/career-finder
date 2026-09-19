@@ -111,12 +111,12 @@ That command builds before running the Node test suite. If invoking the runner d
 
 ### The expected resource or category count is wrong
 
-The counts of 61 resources and 13 categories are explicit integrity assertions. If the dataset changed intentionally:
+The counts of 62 resources and 13 categories are explicit integrity assertions. If the dataset changed intentionally:
 
 1. Verify `resourceIds` and `resources` still align.
 2. Verify every category has at least one resource.
 3. Update the count assertion.
-4. Update “Show all 61 resources” rendered-copy assertions when the UI's derived total changes.
+4. Update “Show all 62 resources” rendered-copy assertions when the UI's derived total changes.
 5. Run the complete suite.
 
 Do not update an assertion merely to hide an accidental duplicate or deletion.
@@ -129,7 +129,7 @@ The automated suite checks HTTPS syntax, URL parsing, and uniqueness. It deliber
 
 ### A newly added resource is not visible in the initial grid
 
-The default library intentionally shows only the first 12 resources. Use “Show all 61 resources,” search for the item, or apply its category filter. If it should be a quick-start item, changing dataset order affects the product's default shortlist and should be intentional.
+The default library intentionally shows only the first 12 resources. Use “Show all 62 resources,” search for the item, or apply its category filter. If it should be a quick-start item, changing dataset order affects the product's default shortlist and should be intentional.
 
 The separate featured section is controlled by `featured: true`, not by dataset position.
 
@@ -154,11 +154,15 @@ One- and two-character alphanumeric queries use whole-token matching. Make sure 
 
 ### A category count looks stale
 
-Category-card counts are derived during render from resource category assignments; there is no cache or saved count to clear. Inspect the resource's `categories` array and the category ID spelling. A TypeScript error usually identifies an invalid ID.
+Category-card counts are derived during render from resource category assignments plus the active college year and search text; there is no cache or saved count to clear. Inspect the resource's `categories` array, year metadata, current query, and category ID spelling. A TypeScript error usually identifies an invalid ID.
+
+### A college-year filter returns fewer or no resources
+
+Year-specific views include only resources whose optional `recommendedForYears` metadata contains the selected year. That field means the destination is an especially useful starting point; it does not claim that every linked opportunity accepts that year. Career category, college year, and search text combine, so use “All years” or “Clear filters” to widen the results. If a verified resource is missing, check its year ID and editorial basis rather than assigning every year merely to fill the view.
 
 ### Favorites or saved searches disappear
 
-Favorites and saved searches are not implemented. Search and filter state exists only in memory and resets on reload. Do not debug browser storage or add persistence unless that feature is explicitly requested.
+Favorites and saved searches are not implemented. Search, career-category, college-year, and expansion state exists only in memory and resets on reload. Do not debug browser storage or add persistence unless that feature is explicitly requested.
 
 ## Interaction, accessibility, and layout
 
@@ -174,9 +178,9 @@ Test the full sequence from the header through the dialog at 200% zoom. Keep dec
 
 ### Motion continues when reduced motion is enabled
 
-The reduced-motion media query at the end of `app/globals.css` collapses animation and transition durations and disables smooth scrolling. Category-card navigation also reads `window.matchMedia("(prefers-reduced-motion: reduce)")`.
+The reduced-motion media query at the end of `app/globals.css` collapses animation and transition durations and disables smooth scrolling. Career-path and college-year card navigation also reads `window.matchMedia("(prefers-reduced-motion: reduce)")`.
 
-Check new animation declarations against that media query. If code requests smooth scrolling directly, add the same preference check used by `chooseCategory`.
+Check new animation declarations against that media query. If code requests smooth scrolling directly, add the same preference check used by `moveToLibraryAndFocusSearch`.
 
 ### The page overflows horizontally on mobile
 

@@ -47,7 +47,7 @@ Treat any of these as a product-scope decision, not as routine polish.
 - **Rendering:** the initial page and metadata are server-rendered by the Vinext worker. `app/CareerGuide.tsx` is a client component and hydrates the interactive directory in the browser.
 - **Metadata:** `app/layout.tsx` derives the metadata base and absolute social-image URL from the incoming request host and protocol.
 - **Resource source:** `app/data/resources.ts` is the sole authored source for the category taxonomy and directory records. There is no runtime resource API.
-- **Search and filters:** module-level normalized search indexes are derived from the resource and category arrays. React component state holds the query, active category, and default-list expansion state.
+- **Search and filters:** module-level normalized search indexes are derived from the resource and category arrays. React component state holds the query, active category, active college year, and default-list expansion state.
 - **Persistence:** none. There is no `localStorage`, cookie, account, database, or server-side user-state behavior. Refreshing the page resets search and filter state.
 - **Styling and artwork:** one handcrafted global stylesheet, `app/globals.css`, supplies layout, tokens, responsive rules, interaction states, CSS illustrations, and motion. The illustrated scenery is composed from decorative HTML elements and CSS; it is not an SVG component system.
 - **Production model:** `npm run build` produces a Worker application in `dist/server` plus browser assets in `dist/client`. This is a stateless Worker deployment, **not** a Next.js static export. `.openai/hosting.json` identifies the Sites project and declares no D1 or R2 binding.
@@ -58,12 +58,12 @@ For the request-to-render and search data flows, see [ARCHITECTURE.md](ARCHITECT
 
 | Path | Responsibility |
 | --- | --- |
-| `app/data/resources.ts` | Category IDs and metadata, resource IDs and records, TypeScript contracts, derived featured list, and category lookup helper. |
-| `app/CareerGuide.tsx` | All visible page sections, reusable card/artwork helpers, search and category-filter behavior, dialog behavior, and client state. |
+| `app/data/resources.ts` | Category and college-year IDs/metadata, resource IDs and records, TypeScript contracts, derived featured list, and lookup helpers. |
+| `app/CareerGuide.tsx` | All visible page sections, reusable card/artwork helpers, search, category/year-filter behavior, dialog behavior, and client state. |
 | `app/globals.css` | Design tokens, typography, layout, component styles, CSS artwork, responsive breakpoints, motion, reduced-motion handling, and print rules. |
 | `app/layout.tsx` | Root HTML language, viewport settings, page metadata, favicon, and social-preview metadata. |
 | `app/page.tsx` | The sole App Router page; renders `CareerGuide`. |
-| `tests/rendered-html.test.mjs` | Resource-integrity, search-coverage, healthcare-specialist, and server-rendered HTML/metadata tests. |
+| `tests/rendered-html.test.mjs` | Resource-integrity, year-aware filtering, search-coverage, healthcare-specialist, and server-rendered HTML/metadata tests. |
 | `worker/index.ts` | Cloudflare Worker entry point; routes image-optimization requests and delegates application requests to Vinext. |
 | `vite.config.ts` | Vinext, Sites, and Cloudflare build integration plus local binding declarations. |
 | `build/sites-vite-plugin.ts` | Copies Sites hosting metadata, and a migration directory if one ever exists, into the build artifact. |
@@ -89,11 +89,26 @@ See [FILE_MAP.md](FILE_MAP.md) for the complete navigation map.
 | `tags` | Yes | Controlled `ResourceTag` values displayed as compact labels and included in search. Cards display at most four tags, or three in the featured section. |
 | `format` | Yes | Controlled `ResourceFormat` value used both as visible context and to derive the compact format mark. |
 | `featured` | Yes | Whether the resource appears in the separate five-card starting shortlist. |
+| `recommendedForYears` | No | Controlled college-year IDs for which the resource is an especially useful starting point. This is editorial resource-level guidance, not job-level eligibility. |
 | `searchTerms` | No | Specific majors, roles, and common aliases included in search without adding visible card clutter. |
 | `updateFrequency` | No | A visible cadence claim. Include only when it has been verified and is useful. |
 | `notes` | No | Important caveat or eligibility/context note displayed at the bottom of the card. |
 
-The current data contains **61 resources**, **13 broad categories**, and five featured resources: ApplyGuy, Handshake, InternList, Jobright.ai, and Simplify. Tests intentionally protect those totals and featured IDs; update the assertions when an editorially approved data change makes them obsolete.
+The current data contains **62 resources**, **13 broad categories**, and five featured resources: ApplyGuy, Handshake, InternList, Jobright.ai, and Simplify. The Technology category includes the non-featured **Underclassmen Opportunities** collection, recommended for freshmen and sophomores. Tests intentionally protect those totals, the featured IDs, and key year assignments; update the assertions only when an editorially approved data change makes them obsolete.
+
+### College-year metadata
+
+The controlled college-year values are:
+
+| ID | Visible label |
+| --- | --- |
+| `freshman` | Freshman |
+| `sophomore` | Sophomore |
+| `junior` | Junior |
+| `senior` | Senior |
+| `new-grad` | New Grad |
+
+`recommendedForYears` is optional. Do not tag every resource merely to populate a filter, and never interpret the field as a guarantee that an individual listing accepts a particular year. Verify each assignment against the destination's purpose and keep eligibility caveats with the original opportunity.
 
 ### Category metadata
 
@@ -119,10 +134,11 @@ Use broad visible categories plus deep `searchTerms` and category `keywords` to 
 
 1. The query is lowercased, punctuation is collapsed to spaces, and the characters `+`, `#`, and `/` are retained.
 2. A resource index combines `name`, `description`, `format`, `tags`, `bestFor`, and optional `searchTerms`.
-3. The active category is applied before text search, so category and query filters can work together.
-4. Resource matches are tried first. Most queries use normalized substring matching; one- or two-character alphanumeric queries such as `AI`, `IT`, `PR`, and `HR` require a whole-token match to avoid accidental substring results.
-5. Category labels and keywords are used only as a fallback when no resource directly matches the query. This keeps specialist searches focused instead of expanding them to an entire career family.
-6. In the unfiltered default view, the library shows the first 12 resources and offers an explicit show-all control. A query or category filter shows every match.
+3. The active category and optional college year first scope the resource set; resources without a matching `recommendedForYears` value are excluded from an active year scope.
+4. Text search then runs within that combined scope, so category, year, and query can work together without changing search semantics.
+5. Resource matches are tried first. Most queries use normalized substring matching; one- or two-character alphanumeric queries such as `AI`, `IT`, `PR`, and `HR` require a whole-token match to avoid accidental substring results.
+6. Category labels and keywords are used only as a fallback when no resource directly matches the query within the current category/year scope. This keeps specialist searches focused instead of expanding them to an entire career family.
+7. In the unfiltered default view, the library shows the first 12 resources and offers an explicit show-all control. A query, category, or year filter shows every match.
 
 Search behavior is duplicated deliberately in the test helper so expected query coverage can be verified independently of browser interaction. If the production algorithm changes, update its tests in the same change.
 
@@ -148,7 +164,7 @@ See [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) for token and component details.
 - Keep motion subtle, lightweight, and decorative or meaningfully responsive.
 - Prefer CSS transforms and opacity; avoid heavy runtime animation libraries without a demonstrated need.
 - Current ambient motion includes slow pinwheel rotation, cloud drift, wind drift, target breathing, path-dot hops, and tree sway. Short transitions communicate hover and focus response.
-- Category-card navigation checks `prefers-reduced-motion` before requesting smooth scrolling.
+- Career-path and college-year card navigation checks `prefers-reduced-motion` before requesting smooth scrolling.
 - The stylesheet's reduced-motion media query removes smooth scrolling and reduces all animation and transition durations to effectively zero.
 - Never make animation necessary to understand content or operate a control.
 
@@ -161,7 +177,7 @@ Preserve and extend the existing baseline:
 - a keyboard-visible skip link and visible `:focus-visible` outline;
 - native buttons and links rather than clickable generic elements;
 - associated labels and fieldset/legend semantics for search and filters;
-- `aria-pressed` on category filters and a polite, atomic live result count;
+- `aria-pressed` on category and college-year filters and a polite, atomic live result count;
 - descriptive external-link names that announce opening a new tab;
 - decorative artwork hidden from assistive technology;
 - usable touch targets and layouts at desktop, tablet, and narrow mobile widths;
@@ -176,12 +192,14 @@ The repository uses Node's built-in test runner, `node:assert/strict`, and the T
 
 Current automated coverage verifies:
 
-- 13 categories and 61 resources;
+- 13 categories and 62 resources;
+- all five college-year IDs/labels, valid non-duplicated `recommendedForYears` values, and key editorial assignments;
 - unique category IDs, resource IDs, and resource URLs;
 - alignment of ID tuples with authored arrays;
 - HTTPS URL shape, required content, valid categories, tag presence, and the five-tag maximum;
 - at least one resource in every category;
 - the exact featured-resource set;
+- category + year, query + year, and category + query + year filtering, including “All years” behavior;
 - search coverage for required majors and career directions, including short aliases;
 - specialist healthcare and nursing search behavior;
 - server-rendered page content, metadata, language, social image URL, and safe new-tab link attributes;
@@ -223,7 +241,7 @@ npm test
 ## Known non-goals and boundaries
 
 - The application does not host, rank, scrape, or accept job listings.
-- It does not apply to jobs or verify student eligibility.
+- It does not apply to jobs or verify student eligibility; college-year filtering only organizes curated resource destinations that may be useful for that year.
 - It does not personalize results or persist a search.
 - It does not provide accounts, alerts, favorites, or application tracking.
 - It does not currently collect resource suggestions. The “Suggest a resource” control opens an informational dialog stating that no contact method is configured.

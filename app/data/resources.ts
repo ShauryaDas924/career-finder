@@ -285,6 +285,34 @@ export const categoryById = Object.fromEntries(
   categories.map((category) => [category.id, category]),
 ) as unknown as Readonly<Record<CategoryId, CategoryMetadata>>;
 
+export const collegeYearIds = [
+  "freshman",
+  "sophomore",
+  "junior",
+  "senior",
+  "new-grad",
+] as const;
+
+export type CollegeYearId = (typeof collegeYearIds)[number];
+
+export interface CollegeYearMetadata {
+  readonly id: CollegeYearId;
+  readonly label: string;
+  readonly audienceLabel: string;
+}
+
+export const collegeYears = [
+  { id: "freshman", label: "Freshman", audienceLabel: "Freshmen" },
+  { id: "sophomore", label: "Sophomore", audienceLabel: "Sophomores" },
+  { id: "junior", label: "Junior", audienceLabel: "Juniors" },
+  { id: "senior", label: "Senior", audienceLabel: "Seniors" },
+  { id: "new-grad", label: "New Grad", audienceLabel: "New Grads" },
+] as const satisfies readonly CollegeYearMetadata[];
+
+export const collegeYearById = Object.fromEntries(
+  collegeYears.map((collegeYear) => [collegeYear.id, collegeYear]),
+) as unknown as Readonly<Record<CollegeYearId, CollegeYearMetadata>>;
+
 export const resourceIds = [
   "applyguy-2027-internships",
   "simplify-summer-2027-internships",
@@ -347,6 +375,7 @@ export const resourceIds = [
   "parker-dewey",
   "careeronestop-job-search",
   "jobright",
+  "underclassmen-opportunities",
 ] as const;
 
 export type ResourceId = (typeof resourceIds)[number];
@@ -437,6 +466,11 @@ export interface Resource {
   readonly tags: readonly ResourceTag[];
   readonly format: ResourceFormat;
   readonly featured: boolean;
+  /**
+   * College years for which this destination is an especially useful starting
+   * point. This is editorial guidance, not job-level eligibility.
+   */
+  readonly recommendedForYears?: readonly CollegeYearId[];
   /** Specific majors, role names, and common aliases that should match search. */
   readonly searchTerms?: readonly string[];
   /** Include only when a claim is verified and worth showing to students. */
@@ -549,6 +583,7 @@ export const resources = [
     tags: ["ALL MAJORS", "EARLY CAREER"],
     format: "Internship directory",
     featured: true,
+    recommendedForYears: ["freshman", "sophomore", "junior", "senior"],
     searchTerms: [
       "internships broadly",
       "general internships",
@@ -634,6 +669,13 @@ export const resources = [
     tags: ["UNIVERSITY", "ALL MAJORS", "EARLY CAREER"],
     format: "University career platform",
     featured: true,
+    recommendedForYears: [
+      "freshman",
+      "sophomore",
+      "junior",
+      "senior",
+      "new-grad",
+    ],
     searchTerms: ["college career center", "campus recruiting", "any major", "career fair"],
     notes: "Availability and features can vary by school.",
   },
@@ -652,6 +694,7 @@ export const resources = [
     tags: ["ALL MAJORS", "EARLY CAREER"],
     format: "Job platform",
     featured: false,
+    recommendedForYears: ["senior", "new-grad"],
     searchTerms: ["jobs", "internships", "entry level", "college students", "university"],
   },
   {
@@ -669,6 +712,7 @@ export const resources = [
     tags: ["TECHNOLOGY", "ALL MAJORS", "EARLY CAREER"],
     format: "Job platform",
     featured: true,
+    recommendedForYears: ["junior", "senior", "new-grad"],
     searchTerms: ["software", "computer science", "AI", "data science", "product", "internships"],
   },
   {
@@ -703,6 +747,7 @@ export const resources = [
     tags: ["CONSULTING", "BUSINESS", "EARLY CAREER"],
     format: "Industry job board",
     featured: false,
+    recommendedForYears: ["junior", "senior", "new-grad"],
     searchTerms: ["consultant", "strategy consulting", "business analyst", "case interview"],
   },
   {
@@ -771,6 +816,7 @@ export const resources = [
     tags: ["FINANCE", "QUANT", "EARLY CAREER"],
     format: "Industry job board",
     featured: false,
+    recommendedForYears: ["junior", "senior", "new-grad"],
     searchTerms: ["investment banking", "asset management", "private equity", "trading", "quantitative finance"],
   },
   {
@@ -788,6 +834,7 @@ export const resources = [
     tags: ["INSURANCE", "ACTUARIAL", "FINANCE", "BUSINESS"],
     format: "Career education resource",
     featured: false,
+    recommendedForYears: ["freshman", "sophomore"],
     searchTerms: ["underwriting", "claims", "risk management", "actuarial science", "insurance jobs"],
     notes: "Best used to learn the field before moving to an employer or job search.",
   },
@@ -931,6 +978,7 @@ export const resources = [
     tags: ["HEALTHCARE", "ADMINISTRATION", "EARLY CAREER", "BUSINESS"],
     format: "Fellowship directory",
     featured: false,
+    recommendedForYears: ["new-grad"],
     searchTerms: [
       "healthcare administration",
       "health administration",
@@ -1036,6 +1084,7 @@ export const resources = [
     tags: ["NURSING", "CLINICAL", "HEALTHCARE", "EARLY CAREER"],
     format: "Professional association job board",
     featured: false,
+    recommendedForYears: ["senior", "new-grad"],
     searchTerms: [
       "nurse",
       "registered nurse",
@@ -1061,6 +1110,7 @@ export const resources = [
     tags: ["PUBLIC HEALTH", "GOVERNMENT", "RESEARCH", "EARLY CAREER"],
     format: "Government career portal",
     featured: false,
+    recommendedForYears: ["freshman", "sophomore", "junior", "senior"],
     searchTerms: ["epidemiology", "biology", "laboratory", "health policy", "federal internships"],
     notes: "Eligibility, application windows, and hiring routes vary by program.",
   },
@@ -1198,6 +1248,7 @@ export const resources = [
     tags: ["RESEARCH", "SCIENCE", "HEALTHCARE", "GOVERNMENT"],
     format: "Government career portal",
     featured: false,
+    recommendedForYears: ["senior", "new-grad"],
     searchTerms: ["biology", "neuroscience", "laboratory", "biomedical science", "postbac", "clinical research"],
     notes: "Some opportunities are intended for specific education or training levels.",
   },
@@ -1216,6 +1267,7 @@ export const resources = [
     tags: ["RESEARCH", "SCIENCE", "ENGINEERING", "EARLY CAREER"],
     format: "Research opportunity directory",
     featured: false,
+    recommendedForYears: ["freshman", "sophomore", "junior"],
     searchTerms: ["REU", "biology", "chemistry", "physics", "environmental science", "summer research"],
     notes: "Eligibility and application processes are set by each participating site.",
   },
@@ -1234,6 +1286,7 @@ export const resources = [
     tags: ["RESEARCH", "LAB", "ENGINEERING", "GOVERNMENT"],
     format: "Government career portal",
     featured: false,
+    recommendedForYears: ["sophomore", "junior", "senior"],
     searchTerms: ["SULI", "physics", "chemistry", "computer science", "energy", "environmental science"],
     notes: "Review the current term, eligibility, and citizenship requirements before applying.",
   },
@@ -1257,6 +1310,13 @@ export const resources = [
     tags: ["RESEARCH", "SCIENCE", "PUBLIC HEALTH", "GOVERNMENT", "EARLY CAREER"],
     format: "Research opportunity directory",
     featured: false,
+    recommendedForYears: [
+      "freshman",
+      "sophomore",
+      "junior",
+      "senior",
+      "new-grad",
+    ],
     searchTerms: ["ORISE", "laboratory", "biology", "chemistry", "engineering", "health policy"],
     notes: "Eligibility, location, and appointment terms differ across programs.",
   },
@@ -1275,6 +1335,13 @@ export const resources = [
     tags: ["GOVERNMENT", "EARLY CAREER", "ALL MAJORS", "POLICY"],
     format: "Government career portal",
     featured: false,
+    recommendedForYears: [
+      "freshman",
+      "sophomore",
+      "junior",
+      "senior",
+      "new-grad",
+    ],
     searchTerms: ["public administration", "political science", "Pathways", "federal jobs", "student government"],
     notes: "Read each posting's eligibility and required documents carefully.",
   },
@@ -1293,6 +1360,13 @@ export const resources = [
     tags: ["GOVERNMENT", "POLICY", "EARLY CAREER", "ALL MAJORS"],
     format: "Career education resource",
     featured: false,
+    recommendedForYears: [
+      "freshman",
+      "sophomore",
+      "junior",
+      "senior",
+      "new-grad",
+    ],
     searchTerms: ["public policy", "political science", "public administration", "federal internships", "public service"],
   },
   {
@@ -1430,6 +1504,7 @@ export const resources = [
     tags: ["TEACHING", "EDUCATION", "EARLY CAREER"],
     format: "Industry job board",
     featured: false,
+    recommendedForYears: ["senior", "new-grad"],
     searchTerms: ["teacher", "school counselor", "special education", "student support", "school administrator"],
   },
   {
@@ -1498,6 +1573,7 @@ export const resources = [
     tags: ["NONPROFIT", "SERVICE", "ALL MAJORS", "EARLY CAREER"],
     format: "Internship directory",
     featured: false,
+    recommendedForYears: ["freshman", "sophomore", "junior", "senior"],
     searchTerms: ["social services", "community programs", "human services", "social impact", "volunteer"],
   },
   {
@@ -1519,6 +1595,7 @@ export const resources = [
     tags: ["SERVICE", "NONPROFIT", "GOVERNMENT", "ALL MAJORS"],
     format: "Service opportunity portal",
     featured: false,
+    recommendedForYears: ["senior", "new-grad"],
     searchTerms: ["AmeriCorps", "community programs", "human services", "education service", "public service"],
     notes: "AmeriCorps service positions differ from conventional jobs; review each program's benefits and commitment.",
   },
@@ -1537,6 +1614,13 @@ export const resources = [
     tags: ["EARLY CAREER", "ALL MAJORS", "BUSINESS"],
     format: "Micro-internship platform",
     featured: false,
+    recommendedForYears: [
+      "freshman",
+      "sophomore",
+      "junior",
+      "senior",
+      "new-grad",
+    ],
     searchTerms: ["micro internship", "college students", "project work", "career exploration", "remote internship"],
     notes: "Project availability and fit vary; treat micro-internships as one part of a broader search.",
   },
@@ -1579,6 +1663,36 @@ export const resources = [
       "entry level jobs",
       "career opportunities",
     ],
+  },
+  {
+    id: "underclassmen-opportunities",
+    name: "Underclassmen Opportunities",
+    url: "https://github.com/Jose-Gael-Cruz-Lopez/underclassmen-opportunities",
+    description:
+      "A community-maintained GitHub collection of internships, programs, and resources assembled for college freshmen and sophomores, with a strong technology focus.",
+    categories: ["technology"],
+    bestFor: [
+      "Freshman and sophomore opportunities",
+      "Technology internships and early programs",
+      "Exploring programs designed for underclassmen",
+    ],
+    tags: ["TECHNOLOGY", "EARLY CAREER"],
+    format: "GitHub collection",
+    featured: false,
+    recommendedForYears: ["freshman", "sophomore"],
+    searchTerms: [
+      "underclassmen",
+      "freshman",
+      "freshmen",
+      "first year",
+      "sophomore",
+      "sophomores",
+      "second year",
+      "technology internships",
+      "early insight programs",
+    ],
+    notes:
+      "Deadlines and eligibility vary; verify each opportunity on its original source.",
   },
 ] as const satisfies readonly Resource[];
 

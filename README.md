@@ -11,11 +11,12 @@ It is deliberately **not a job board**. The application does not scrape, copy, h
 Career information is scattered across professional associations, government portals, university platforms, specialist job boards, and maintained internship trackers. Students often know what they want to explore but not which sources are worth checking. Where to Look turns that open-ended search into a small, understandable path:
 
 1. Choose a broad career family.
-2. Search by a major, role, or topic.
-3. Learn what each resource is best for.
-4. Continue to the original source and confirm details there.
+2. Optionally narrow to resources especially useful for your college year.
+3. Search by a major, role, or topic.
+4. Learn what each resource is best for.
+5. Continue to the original source and confirm eligibility details there.
 
-The current directory contains **61 resources across 13 visible career families**:
+The current directory contains **62 resources across 13 visible career families**:
 
 - Technology
 - Business
@@ -38,9 +39,10 @@ Specific majors such as healthcare management, nursing, civil engineering, actua
 - Five-step “Start Here” guidance for students beginning a search
 - Five editorially selected featured resources
 - Career-family cards with live resource counts
+- College-year browsing for Freshman, Sophomore, Junior, Senior, and New Grad
 - Specialist-first text search across names, descriptions, formats, tags, “best for” guidance, and aliases
 - Broad-category fallback when a query has no direct resource match
-- Combinable category filters and search
+- Combinable category, college-year, and text-search filters
 - A 12-card starting set with an accessible expand/collapse control for all resources
 - Empty-state and clear-filter recovery
 - Safe external links with descriptive accessible names
@@ -91,7 +93,7 @@ npm run lint
 # Strict TypeScript check
 npx tsc --noEmit
 
-# Production build followed by the four Node tests
+# Production build followed by the five Node tests
 npm test
 
 # Production build only
@@ -118,7 +120,7 @@ public/
   favicon.png           Product favicon
   og.png                Social sharing image
 tests/
-  rendered-html.test.mjs  Dataset, search, healthcare, and rendered-HTML checks
+  rendered-html.test.mjs  Dataset, year-filter, search, healthcare, and rendered-HTML checks
 worker/
   index.ts              Cloudflare Worker entry and image-optimization route
 .openai/hosting.json    Sites project and optional logical storage bindings
@@ -132,10 +134,13 @@ For every maintained file and when to edit it, see [FILE_MAP.md](FILE_MAP.md).
 [app/data/resources.ts](app/data/resources.ts) is the single source of truth. It defines:
 
 - the 13 category IDs and their labels, descriptions, icons, and fallback keywords;
+- the five college-year IDs and their visible/audience labels;
 - allowed resource IDs, formats, and tags;
 - the Resource interface;
-- all 61 resource records;
+- all 62 resource records, including the Technology-focused Underclassmen Opportunities collection;
 - the derived featured-resource list and category helper.
+
+The optional `recommendedForYears` field marks years for which a resource is an especially useful starting point. It is editorial resource-level guidance, not a claim that every opportunity at that destination accepts students in those years.
 
 To add a resource:
 
@@ -143,9 +148,10 @@ To add a resource:
 2. Add a stable ID to resourceIds.
 3. Add a Resource object with the same ID to resources.
 4. Reuse existing categories, formats, and tags unless a genuinely new concept is required.
-5. Add specific majors, job titles, and aliases to searchTerms.
-6. Make only supportable claims; omit updateFrequency when cadence is not verified.
-7. Run the quality commands and manually test the relevant searches.
+5. Add `recommendedForYears` only when there is a supportable editorial basis.
+6. Add specific majors, job titles, and aliases to searchTerms.
+7. Make only supportable claims; omit updateFrequency when cadence is not verified.
+8. Run the quality commands and manually test the relevant searches and filter combinations.
 
 The full curation rules, field reference, and copy-ready example are in [RESOURCE_GUIDE.md](RESOURCE_GUIDE.md).
 
@@ -153,7 +159,7 @@ The full curation rules, field reference, and copy-ready example are in [RESOURC
 
 The product uses semantic landmarks and headings, a visible-on-focus skip link, native buttons and forms, a named filter fieldset, a native dialog, visible focus treatment, pressed and expanded states, a polite result status, and descriptive new-tab labels. Decorative artwork is hidden from assistive technology.
 
-The prefers-reduced-motion rules effectively disable animation, transitions, and smooth scrolling. The category-card interaction also checks the preference before scrolling.
+The prefers-reduced-motion rules effectively disable animation, transitions, and smooth scrolling. Career-path and college-year card navigation also checks the preference before scrolling.
 
 See [ACCESSIBILITY.md](ACCESSIBILITY.md) for implementation notes and the manual QA checklist.
 
