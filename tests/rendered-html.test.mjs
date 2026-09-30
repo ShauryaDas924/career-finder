@@ -155,7 +155,7 @@ test("resource data remains complete, unique, and internally consistent", async 
   } = await loadResourceData();
 
   assert.equal(categories.length, 13);
-  assert.equal(resources.length, 62);
+  assert.equal(resources.length, 64);
   assert.deepEqual(collegeYearIds, [
     "freshman",
     "sophomore",
@@ -343,6 +343,44 @@ test("search covers the addendum's majors and career directions", async () => {
   assert.ok(civilEngineeringIds.has("cmaa-career-hq"));
 });
 
+test("search finds the selected work-setup and compensation tools", async () => {
+  const data = await loadResourceData();
+  const search = buildSearch(data);
+  const expectedMatches = [
+    ["remote jobs", "handshake"],
+    ["hybrid jobs", "handshake"],
+    ["onsite", "handshake"],
+    ["in person", "handshake"],
+    ["jobs near me", "handshake"],
+    ["full time", "handshake"],
+    ["part time", "handshake"],
+    ["salary filter", "simplify"],
+    ["salary range", "simplify"],
+    ["compensation", "simplify"],
+    ["time zone", "himalayas"],
+    ["work from home", "himalayas"],
+    ["disclosed salary", "hiringcafe"],
+    ["no experience", "hiringcafe"],
+    ["minimum salary", "usajobs-early-careers"],
+    ["minimum salary", "hiringcafe"],
+    ["highest salary", "hiringcafe"],
+    ["highest salary", "himalayas"],
+  ];
+
+  for (const [query, expectedId] of expectedMatches) {
+    assert.ok(
+      search(query).some(({ id }) => id === expectedId),
+      `${query} should find ${expectedId}`,
+    );
+  }
+
+  assert.deepEqual(
+    search("highest salary").map(({ id }) => id),
+    ["usajobs-early-careers", "hiringcafe", "himalayas"],
+    "only resources with verified salary-order controls should claim that phrase",
+  );
+});
+
 test("college-year guidance composes with category and text search", async () => {
   const data = await loadResourceData();
   const search = buildSearch(data);
@@ -494,10 +532,14 @@ test("the production page server-renders its content and metadata", async () => 
     "Browse by career path",
     "Browse by college year",
     "Find resources especially useful for your current year. Eligibility varies by opportunity, so always confirm details on the original source.",
+    "Search your way",
+    "Work where you want",
+    "Compare the pay",
+    "can sort by Highest salary",
     "Find a useful place to look",
     "A few things worth remembering",
     "Was bored lol so I made this",
-    "Show all 62 resources",
+    "Show all 64 resources",
   ]) {
     assert.ok(text.includes(phrase), `server-rendered page should include “${phrase}”`);
   }
@@ -516,11 +558,11 @@ test("the production page server-renders its content and metadata", async () => 
     assert.ok(text.includes(label), `college-year controls should include “${label}”`);
   }
   for (const [audience, count] of [
-    ["Freshmen", 11],
-    ["Sophomores", 12],
-    ["Juniors", 13],
-    ["Seniors", 17],
-    ["New Grads", 14],
+    ["Freshmen", 12],
+    ["Sophomores", 13],
+    ["Juniors", 15],
+    ["Seniors", 19],
+    ["New Grads", 16],
   ]) {
     assert.ok(
       html.includes(
@@ -533,6 +575,31 @@ test("the production page server-renders its content and metadata", async () => 
     html,
     /<button\b(?=[^>]*\baria-pressed="true")[^>]*>\s*All years\s*<\/button>/i,
   );
+
+  assert.match(
+    html,
+    /<section\b(?=[^>]*\bclass="search-tools-section")(?=[^>]*\baria-labelledby="search-tools-title")[^>]*>/i,
+  );
+  const yearSectionIndex = html.indexOf('id="college-years"');
+  const searchToolsIndex = html.indexOf('class="search-tools-section"');
+  const librarySectionIndex = html.indexOf('id="resource-library"');
+  assert.ok(
+    yearSectionIndex < searchToolsIndex && searchToolsIndex < librarySectionIndex,
+    "search-tool guidance should render between college-year browsing and the library",
+  );
+
+  const searchToolsHtml = html.slice(searchToolsIndex, librarySectionIndex);
+  for (const url of [
+    "https://joinhandshake.com/students/",
+    "https://himalayas.app/jobs",
+    "https://hiringcafe.com/",
+    "https://intern.usajobs.gov/search/",
+  ]) {
+    assert.ok(
+      searchToolsHtml.includes(`href="${url}"`),
+      `search-tool guidance should link to ${url}`,
+    );
+  }
 
   assert.match(
     html,

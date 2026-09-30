@@ -17,10 +17,19 @@ import {
   type CategoryId,
   type CollegeYearId,
   type Resource,
+  type ResourceId,
 } from "./data/resources";
 
 type ActiveCategory = "all" | CategoryId;
 type ActiveCollegeYear = "all" | CollegeYearId;
+
+type SearchToolIntent = {
+  readonly id: "work" | "pay";
+  readonly label: string;
+  readonly title: string;
+  readonly description: string;
+  readonly resourceIds: readonly ResourceId[];
+};
 
 function normalizeSearchText(value: string) {
   return value
@@ -83,6 +92,29 @@ const categorySearchIndex = new Map(
     ),
   ]),
 );
+
+const resourceById = new Map<ResourceId, Resource>(
+  resources.map((resource) => [resource.id, resource] as const),
+);
+
+const searchToolIntents = [
+  {
+    id: "work",
+    label: "REMOTE · HYBRID · ONSITE · LOCATION",
+    title: "Work where you want",
+    description:
+      "Handshake combines student-focused city or ZIP, distance, work setup, and job-type filters. Himalayas adds remote-only country or time-zone, entry-level, internship, salary-range, and salary-sorting controls.",
+    resourceIds: ["handshake", "himalayas"],
+  },
+  {
+    id: "pay",
+    label: "SALARY · COMPENSATION · PAY",
+    title: "Compare the pay",
+    description:
+      "HiringCafe combines location and work setup with minimum-salary and disclosed-pay filters, then can sort by Highest salary. USAJOBS adds the same named sort for official federal openings.",
+    resourceIds: ["hiringcafe", "usajobs-early-careers"],
+  },
+] as const satisfies readonly SearchToolIntent[];
 
 function matchesSearchText(normalizedIndex: string, normalizedQuery: string) {
   if (!normalizedQuery) return true;
@@ -227,6 +259,28 @@ function ResourceCard({
         </a>
       </div>
       {resource.notes ? <p className="resource-note">{resource.notes}</p> : null}
+    </article>
+  );
+}
+
+function SearchToolCard({ resource }: { resource: Resource }) {
+  return (
+    <article className="search-tool-card">
+      <div className="search-tool-card__topline">
+        <span className="format-mark">{formatMark(resource.format)}</span>
+        <span className="resource-format">{resource.format}</span>
+      </div>
+      <h4>{resource.name}</h4>
+      <p>{resource.description}</p>
+      <a
+        className="resource-link"
+        href={resource.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Visit ${resource.name} (opens in a new tab)`}
+      >
+        Visit <span aria-hidden="true">↗</span>
+      </a>
     </article>
   );
 }
@@ -573,6 +627,69 @@ export default function CareerGuide() {
                 })}
               </div>
             </fieldset>
+          </div>
+        </section>
+
+        <section
+          className="search-tools-section"
+          aria-labelledby="search-tools-title"
+        >
+          <div className="page-shell">
+            <div className="section-heading section-heading--split">
+              <div>
+                <p className="eyebrow">A MORE FOCUSED SEARCH</p>
+                <h2 id="search-tools-title">Search your way</h2>
+              </div>
+              <p>
+                Already know what matters most? These external tools help you
+                narrow opportunities by where you work, how you work, or what
+                they pay.
+              </p>
+            </div>
+
+            <div className="search-intent-grid">
+              {searchToolIntents.map((intent) => (
+                <section
+                  className={`search-intent search-intent--${intent.id}`}
+                  aria-labelledby={`search-intent-${intent.id}`}
+                  key={intent.id}
+                >
+                  <div className="search-intent__heading">
+                    <span
+                      className={`search-intent-mark search-intent-mark--${intent.id}`}
+                      aria-hidden="true"
+                    >
+                      <i />
+                      <b />
+                    </span>
+                    <div>
+                      <p>{intent.label}</p>
+                      <h3 id={`search-intent-${intent.id}`}>{intent.title}</h3>
+                    </div>
+                  </div>
+                  <p className="search-intent__description">
+                    {intent.description}
+                  </p>
+                  <div className="search-tool-list">
+                    {intent.resourceIds.map((resourceId) => {
+                      const resource = resourceById.get(resourceId);
+
+                      return resource ? (
+                        <SearchToolCard
+                          resource={resource}
+                          key={resource.id}
+                        />
+                      ) : null;
+                    })}
+                  </div>
+                </section>
+              ))}
+            </div>
+            <p className="search-tools-note">
+              Filters and pay details belong to each external service and can
+              change. Confirm the final work setup and compensation on the
+              original listing.
+            </p>
           </div>
         </section>
 

@@ -8,8 +8,9 @@ Where to Look is a curated directory of external internship and early-career res
 
 1. choose a broad career path;
 2. discover reputable places that serve that path;
-3. understand what each source is best for; and
-4. continue to the organization that maintains the opportunity.
+3. find focused external search tools when work setup, location, or compensation matters;
+4. understand what each source is best for; and
+5. continue to the organization that maintains the opportunity.
 
 The project solves a discovery problem, not an application-management problem. It reduces the need to know every association, government portal, specialist job board, or maintained internship list before beginning a search.
 
@@ -48,6 +49,7 @@ Treat any of these as a product-scope decision, not as routine polish.
 - **Metadata:** `app/layout.tsx` derives the metadata base and absolute social-image URL from the incoming request host and protocol.
 - **Resource source:** `app/data/resources.ts` is the sole authored source for the category taxonomy and directory records. There is no runtime resource API.
 - **Search and filters:** module-level normalized search indexes are derived from the resource and category arrays. React component state holds the query, active category, active college year, and default-list expansion state.
+- **Focused search-tool guidance:** a static, typed `ResourceId` mapping in `app/CareerGuide.tsx` resolves four canonical catalog records for the “Search your way” section: Handshake, Himalayas, HiringCafe, and USAJOBS Early Careers. It adds no state, filter dimension, data source, or second copy of destination metadata.
 - **Persistence:** none. There is no `localStorage`, cookie, account, database, or server-side user-state behavior. Refreshing the page resets search and filter state.
 - **Styling and artwork:** one handcrafted global stylesheet, `app/globals.css`, supplies layout, tokens, responsive rules, interaction states, CSS illustrations, and motion. The illustrated scenery is composed from decorative HTML elements and CSS; it is not an SVG component system.
 - **Production model:** `npm run build` produces a Worker application in `dist/server` plus browser assets in `dist/client`. This is a stateless Worker deployment, **not** a Next.js static export. `.openai/hosting.json` identifies the Sites project and declares no D1 or R2 binding.
@@ -59,11 +61,12 @@ For the request-to-render and search data flows, see [ARCHITECTURE.md](ARCHITECT
 | Path | Responsibility |
 | --- | --- |
 | `app/data/resources.ts` | Category and college-year IDs/metadata, resource IDs and records, TypeScript contracts, derived featured list, and lookup helpers. |
-| `app/CareerGuide.tsx` | All visible page sections, reusable card/artwork helpers, search, category/year-filter behavior, dialog behavior, and client state. |
+| `app/CareerGuide.tsx` | All visible page sections, reusable card/artwork helpers, the typed focused-search mapping, search, category/year-filter behavior, dialog behavior, and client state. |
 | `app/globals.css` | Design tokens, typography, layout, component styles, CSS artwork, responsive breakpoints, motion, reduced-motion handling, and print rules. |
 | `app/layout.tsx` | Root HTML language, viewport settings, page metadata, favicon, and social-preview metadata. |
 | `app/page.tsx` | The sole App Router page; renders `CareerGuide`. |
-| `tests/rendered-html.test.mjs` | Resource-integrity, year-aware filtering, search-coverage, healthcare-specialist, and server-rendered HTML/metadata tests. |
+| `tests/rendered-html.test.mjs` | Resource-integrity, year-aware filtering, broad and focused search coverage, healthcare-specialist, and server-rendered HTML/metadata tests. |
+| `SEARCH_TOOL_RESEARCH.md` | Dated first-party evidence and candidate decisions for work-setup and compensation capability claims. |
 | `worker/index.ts` | Cloudflare Worker entry point; routes image-optimization requests and delegates application requests to Vinext. |
 | `vite.config.ts` | Vinext, Sites, and Cloudflare build integration plus local binding declarations. |
 | `build/sites-vite-plugin.ts` | Copies Sites hosting metadata, and a migration directory if one ever exists, into the build artifact. |
@@ -94,7 +97,7 @@ See [FILE_MAP.md](FILE_MAP.md) for the complete navigation map.
 | `updateFrequency` | No | A visible cadence claim. Include only when it has been verified and is useful. |
 | `notes` | No | Important caveat or eligibility/context note displayed at the bottom of the card. |
 
-The current data contains **62 resources**, **13 broad categories**, and five featured resources: ApplyGuy, Handshake, InternList, Jobright.ai, and Simplify. The Technology category includes the non-featured **Underclassmen Opportunities** collection, recommended for freshmen and sophomores. Tests intentionally protect those totals, the featured IDs, and key year assignments; update the assertions only when an editorially approved data change makes them obsolete.
+The current data contains **64 resources**, **13 broad categories**, and five featured resources: ApplyGuy, Handshake, InternList, Jobright.ai, and Simplify. The Technology category includes the non-featured **Underclassmen Opportunities** collection, recommended for freshmen and sophomores. HiringCafe and Himalayas are non-featured General / Any Major records added after the focused-search research; “Search your way” selects those two alongside Handshake and USAJOBS Early Careers. Simplify remains featured and searchable but is not in the compact mapping. The additions changed the resource total but did not change the `Resource` schema. Tests intentionally protect the totals, featured IDs, focused links, and key year assignments; update the assertions only when an editorially approved data change makes them obsolete.
 
 ### College-year metadata
 
@@ -141,6 +144,8 @@ Use broad visible categories plus deep `searchTerms` and category `keywords` to 
 7. In the unfiltered default view, the library shows the first 12 resources and offers an explicit show-all control. A query, category, or year filter shows every match.
 
 Search behavior is duplicated deliberately in the test helper so expected query coverage can be verified independently of browser interaction. If the production algorithm changes, update its tests in the same change.
+
+Search aliases on Handshake, Himalayas, HiringCafe, Simplify, and USAJOBS Early Careers intentionally cover phrases such as `remote jobs`, `hybrid jobs`, `onsite`, `jobs near me`, `time zone`, `no experience`, `salary filter`, `compensation`, `minimum salary`, and `highest salary`. The exact `highest salary` query is limited to the three records with verified salary-order controls: HiringCafe, Himalayas, and USAJOBS. Simplify supports salary filtering and target-range saved searches but does not claim a salary sort. Reverify [SEARCH_TOOL_RESEARCH.md](SEARCH_TOOL_RESEARCH.md) before changing these claims.
 
 ## Visual identity
 
@@ -192,7 +197,7 @@ The repository uses Node's built-in test runner, `node:assert/strict`, and the T
 
 Current automated coverage verifies:
 
-- 13 categories and 62 resources;
+- 13 categories and 64 resources;
 - all five college-year IDs/labels, valid non-duplicated `recommendedForYears` values, and key editorial assignments;
 - unique category IDs, resource IDs, and resource URLs;
 - alignment of ID tuples with authored arrays;
@@ -201,8 +206,9 @@ Current automated coverage verifies:
 - the exact featured-resource set;
 - category + year, query + year, and category + query + year filtering, including “All years” behavior;
 - search coverage for required majors and career directions, including short aliases;
+- focused work-setup and compensation aliases, including the three verified `highest salary` results: HiringCafe, Himalayas, and USAJOBS;
 - specialist healthcare and nursing search behavior;
-- server-rendered page content, metadata, language, social image URL, and safe new-tab link attributes;
+- server-rendered page content, metadata, language, social image URL, the placement and canonical links of “Search your way,” and safe new-tab link attributes;
 - absence of the removed starter/loading preview.
 
 Automated checks do **not** prove that external destinations are live or that their claims remain current. Verify those editorial facts manually. For a normal completed change, run the real repository commands:
@@ -231,7 +237,7 @@ npm test
 2. Keep `app/data/resources.ts` the single source of truth for directory content.
 3. Prefer extending the existing arrays, unions, helper components, and CSS tokens over adding new layers.
 4. Preserve stable IDs. Changing an ID is a data migration even though no database exists because tests and future links may depend on it.
-5. Make resource descriptions and cadence claims factual. A valid URL is not sufficient evidence of usefulness.
+5. Make resource descriptions, capability copy, and cadence claims factual. A valid URL is not sufficient evidence of usefulness; reverify the dated first-party sources in `SEARCH_TOOL_RESEARCH.md` when changing focused search-tool claims.
 6. Keep category breadth stable. Add search aliases before proposing a new visible career family.
 7. Preserve server rendering, client hydration, metadata generation, external-link safety, focus behavior, and reduced motion.
 8. Keep derived counts derived from the dataset; do not hard-code them in page copy.

@@ -24,6 +24,7 @@ Where to Look is compact by design. Product source lives in `app/`, deployment i
 │   └── rendered-html.test.mjs
 ├── worker/
 │   └── index.ts
+├── SEARCH_TOOL_RESEARCH.md
 ├── package.json
 ├── package-lock.json
 ├── vite.config.ts
@@ -34,8 +35,8 @@ Where to Look is compact by design. Product source lives in `app/`, deployment i
 
 | Path | Purpose | Edit when… |
 | --- | --- | --- |
-| `app/data/resources.ts` | Authoritative category, college-year, and resource dataset. Defines all controlled IDs and metadata, resource records and optional `recommendedForYears` guidance, search aliases, the derived featured list, and lookup helpers. | Adding, removing, or correcting a resource; changing aliases, year guidance, featured status, or an approved taxonomy value. Read [RESOURCE_GUIDE.md](RESOURCE_GUIDE.md) first. |
-| `app/CareerGuide.tsx` | Sole interactive page component. Contains local artwork/card helpers, search-index construction, category/year filter state, all visible sections, and suggestion-dialog behavior. | Changing page content, search/filter logic, resource-card presentation, section structure, or client interaction. |
+| `app/data/resources.ts` | Authoritative category, college-year, and resource dataset. Defines all controlled IDs and metadata, resource records and optional `recommendedForYears` guidance, search aliases—including work-setup and compensation discovery terms—the derived featured list, and lookup helpers. | Adding, removing, or correcting a resource; changing aliases, year guidance, featured status, or an approved taxonomy value. Read [RESOURCE_GUIDE.md](RESOURCE_GUIDE.md) first. |
+| `app/CareerGuide.tsx` | Sole interactive page component. Contains local artwork/card helpers, search-index construction, category/year filter state, all visible sections, the typed existing-resource mapping for “Search your way,” and suggestion-dialog behavior. | Changing page content, focused search-tool selection/copy, search/filter logic, resource-card presentation, section structure, or client interaction. |
 | `app/globals.css` | Global design system and all product styles: tokens, typography, components, CSS artwork, animations, breakpoints, reduced-motion behavior, and print rules. | Changing colors, spacing, layout, component appearance, artwork, motion, responsive behavior, or print output. Read [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). |
 | `app/layout.tsx` | Root document shell and request-aware metadata. Sets language, viewport, theme color, favicon, Open Graph data, and X card data. | Changing site-wide metadata, icon references, social-preview copy/image, language, or viewport behavior. |
 | `app/page.tsx` | App Router entry for `/`; renders `CareerGuide`. | Changing the route's top-level composition. Most product edits belong in `CareerGuide.tsx` instead. |
@@ -62,7 +63,7 @@ Where to Look is compact by design. Product source lives in `app/`, deployment i
 
 | Path | Purpose | Edit when… |
 | --- | --- | --- |
-| `tests/rendered-html.test.mjs` | Five-test Node suite. Transpiles the TypeScript data module for direct inspection, independently models category/year-scoped search, invokes the built Worker, and verifies resource and year-metadata integrity, combined-filter behavior, required search coverage, healthcare behavior, metadata, rendered content, and external-link safety. | Resource totals/coverage or year guidance intentionally change, search/filter behavior changes, a regression is fixed, or new critical behavior needs coverage. |
+| `tests/rendered-html.test.mjs` | Six-test Node suite. Transpiles the TypeScript data module for direct inspection, independently models category/year-scoped search, invokes the built Worker, and verifies resource and year-metadata integrity, combined-filter behavior, required and focused search coverage, healthcare behavior, metadata, rendered content, focused-section placement/links, and external-link safety. | Resource totals/coverage or year guidance intentionally change, search/filter behavior changes, focused search-tool claims change, a regression is fixed, or new critical behavior needs coverage. |
 | `eslint.config.mjs` | ESLint flat configuration using Next core-web-vitals and TypeScript rules, with generated/build paths ignored. | Changing lint policy or adding a generated path that should not be linted. |
 | `tsconfig.json` | Strict TypeScript configuration, DOM/ES libraries, bundler module resolution, Next plugin, and `@/*` path alias. | Changing compiler scope or module/type policy. |
 | `package.json` | Node engine requirement (`>=22.13.0`), npm scripts, application dependencies, and build/test tooling. | Adding/removing a dependency, changing a script, or changing the supported Node runtime. |
@@ -84,6 +85,7 @@ Where to Look is compact by design. Product source lives in `app/`, deployment i
 | `DEVELOPMENT_GUIDE.md` | Practical local workflow and common change procedures. |
 | `FEATURES.md` | Current product capabilities and explicit non-goals. |
 | `RESOURCE_GUIDE.md` | Resource schema, curation standards, taxonomy philosophy, and add/update workflow. |
+| `SEARCH_TOOL_RESEARCH.md` | Dated first-party evidence, serious-candidate and hidden-gem decisions, salary-filter/sort distinctions, access/currentness boundaries, and claim limits for work-setup and compensation guidance. |
 | `DESIGN_SYSTEM.md` | Visual tokens, typography, components, illustration, motion, and responsive principles. |
 | `TESTING.md` | Automated coverage, commands, and manual QA expectations. |
 | `DEPLOYMENT.md` | Build artifact and maintained release procedure for the configured hosting model. |

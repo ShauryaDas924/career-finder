@@ -2,7 +2,7 @@
 
 [`app/data/resources.ts`](app/data/resources.ts) is the authoritative source for the taxonomy, resource inventory, search aliases, and featured selection. The interface derives category counts, search results, filters, and featured cards from this file.
 
-Current source inventory: **62 unique resources**, **13 visible categories**, **5 college-year choices**, and **5 featured starting points**. A resource can belong to more than one category, so category totals intentionally add up to more than 62.
+Current source inventory: **64 unique resources**, **13 visible categories**, **5 college-year choices**, and **5 featured starting points**. A resource can belong to more than one category, so category totals intentionally add up to more than 64.
 
 ## Curation principles
 
@@ -42,7 +42,7 @@ Every card should answer “Why would a student open this?” The directory is d
 | `government-law-policy` | Government, Law & Policy | 10 |
 | `education` | Education | 4 |
 | `human-services-nonprofit` | Human Services & Nonprofit | 5 |
-| `general-any-major` | General / Any Major | 14 |
+| `general-any-major` | General / Any Major | 16 |
 
 These counts come from the current multi-category assignments. Update this table when the dataset changes.
 
@@ -62,7 +62,7 @@ The `Resource` interface is read-only and uses closed TypeScript unions for IDs,
 | `format` | Yes | One `ResourceFormat` literal | Visible source type and compact format mark | `"Professional association job board"` |
 | `featured` | Yes | Boolean | Includes a resource in the five-card starting section when `true` | `false` |
 | `recommendedForYears` | No | Array of `CollegeYearId` values for which the destination is an especially useful starting point | Powers Browse by College Year; this is editorial resource guidance, not job-level eligibility | `["freshman", "sophomore"]` |
-| `searchTerms` | No in the type; present on all 62 current resources | Array of specific majors, roles, abbreviations, and aliases | Improves direct search without crowding the card | `["registered nurse", "RN"]` |
+| `searchTerms` | No in the type; present on all 64 current resources | Array of specific majors, roles, abbreviations, and aliases | Improves direct search without crowding the card | `["registered nurse", "RN"]` |
 | `updateFrequency` | No | Short claim that has been specifically verified | Shows an update badge | `"Updated daily"` |
 | `notes` | No | Concise qualification, limitation, or useful caveat | Sets accurate expectations below the card | Eligibility or audience note |
 
@@ -112,6 +112,21 @@ Each ID has a corresponding `CollegeYearMetadata` entry with a visible singular 
 
 `recommendedForYears` is deliberately optional on a resource. Add it only when the destination is an especially useful starting point for that audience. It does **not** assert that every listing on that destination accepts, excludes, or guarantees eligibility for that college year. Students must confirm eligibility on the original opportunity page. Leaving the field out means the resource is not included when a college-year filter is active; it does not mean the resource is unusable or ineligible.
 
+The current unfiltered counts are **12 Freshmen**, **13 Sophomores**, **15 Juniors**, **19 Seniors**, and **16 New Grads**. These are derived from `recommendedForYears` and protected by rendered-page tests; update documentation and assertions together after an intentional editorial change.
+
+### Focused search-tool guidance
+
+The “Search your way” section is a curated view of existing records, not a separate resource source. A small typed mapping in [`app/CareerGuide.tsx`](app/CareerGuide.tsx) stores only intent IDs, labels, explanatory copy, and `ResourceId` references. Destination names, URLs, formats, descriptions, and other catalog metadata continue to come from this file.
+
+The current mapping uses:
+
+- `handshake` for student-focused location/radius, work setup, and job-type discovery;
+- `himalayas` for remote country/time-zone, early-career, salary-range, and salary-order controls;
+- `hiringcafe` for broad location/work-setting, minimum/disclosed-pay, and **Highest salary** controls; and
+- `usajobs-early-careers` for minimum-salary filtering and the verified **Highest salary** sort on federal openings.
+
+These four records carry the supporting work-setup, location, job-type, salary, compensation, and pay aliases in `searchTerms`. HiringCafe and Himalayas were added as non-featured General / Any Major resources; the catalog now has 64 records, while its schema and five-resource featured set are unchanged. Simplify remains featured and retains its verified salary-filter aliases, but is not in the compact mapping because HiringCafe covers that broad compensation role and USAJOBS adds a distinct federal specialist. Exact evidence and rejected alternatives are recorded in [`SEARCH_TOOL_RESEARCH.md`](SEARCH_TOOL_RESEARCH.md); reverify those first-party sources before changing a capability claim.
+
 ## Broad categories, deep search terms
 
 Do not create a top-level category for every major. Keep the visible taxonomy broad and make specialist resources discoverable with precise resource-level aliases.
@@ -146,6 +161,8 @@ Search behavior lives in [`app/CareerGuide.tsx`](app/CareerGuide.tsx):
 This fallback order is intentional. A precise query such as `nursing` should reach the ANA Career Center instead of automatically returning every Healthcare resource.
 
 Resources keep their source-array order. That order controls the first 12 cards in the default library and the order of filtered results; there is no score-based ranking.
+
+Terms such as `remote jobs`, `hybrid jobs`, `onsite`, `in person`, `jobs near me`, `time zone`, `full time`, `part time`, `no experience`, `salary filter`, `salary range`, `disclosed salary`, `minimum salary`, and `highest salary` are intentional discovery aliases on the reviewed records. `highest salary` belongs only to `hiringcafe`, `himalayas`, and `usajobs-early-careers`; do not broaden that phrase to another resource without current first-party evidence for a genuine salary-order sort.
 
 The Browse by College Year and career-path panels derive each visible count from the dataset after applying the other active dimensions, so a card's count matches the result it will produce. Choosing a year applies that same year in the library, collapses the expanded list, scrolls to the library, and focuses search. The library's category, year, and query controls compose rather than replacing one another. Its live status names the active category, year audience, and query as applicable. “Clear filters” restores the query, category, year, collapsed first-12 state, and search focus to the default view; the empty-state “Show every resource” action resets the same filters but intentionally expands the full catalog.
 
@@ -227,6 +244,7 @@ Before accepting a new or changed resource, confirm:
 - **Update frequency:** add it only when a trustworthy source supports the exact wording.
 - **Usefulness:** the destination adds a field, opportunity type, or workflow not already served well.
 - **Search:** important majors, roles, and abbreviations find the specialist resource directly.
+- **External capabilities:** current first-party documentation supports every filter or sort named in visible copy; narrow claims by market or audience where required.
 - **Categories:** assignments are broad, defensible, and not added merely to increase exposure.
 - **College years:** each `recommendedForYears` assignment reflects editorial usefulness, uses a known ID, and is never presented as opportunity-level eligibility.
 - **External behavior:** the link opens the intended page and the site's own eligibility and privacy terms remain clear.

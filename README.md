@@ -12,11 +12,12 @@ Career information is scattered across professional associations, government por
 
 1. Choose a broad career family.
 2. Optionally narrow to resources especially useful for your college year.
-3. Search by a major, role, or topic.
-4. Learn what each resource is best for.
-5. Continue to the original source and confirm eligibility details there.
+3. Use a focused starting point when work setup, location, or pay matters most.
+4. Search by a major, role, or topic.
+5. Learn what each resource is best for.
+6. Continue to the original source and confirm eligibility details there.
 
-The current directory contains **62 resources across 13 visible career families**:
+The current directory contains **64 resources across 13 visible career families**:
 
 - Technology
 - Business
@@ -40,6 +41,7 @@ Specific majors such as healthcare management, nursing, civil engineering, actua
 - Five editorially selected featured resources
 - Career-family cards with live resource counts
 - College-year browsing for Freshman, Sophomore, Junior, Senior, and New Grad
+- A compact “Search your way” guide to existing resources for work setup/location and compensation-focused searches
 - Specialist-first text search across names, descriptions, formats, tags, “best for” guidance, and aliases
 - Broad-category fallback when a query has no direct resource match
 - Combinable category, college-year, and text-search filters
@@ -93,7 +95,7 @@ npm run lint
 # Strict TypeScript check
 npx tsc --noEmit
 
-# Production build followed by the five Node tests
+# Production build followed by the six Node tests
 npm test
 
 # Production build only
@@ -120,10 +122,11 @@ public/
   favicon.png           Product favicon
   og.png                Social sharing image
 tests/
-  rendered-html.test.mjs  Dataset, year-filter, search, healthcare, and rendered-HTML checks
+  rendered-html.test.mjs  Dataset, year-filter, search-tool, healthcare, and rendered-HTML checks
 worker/
   index.ts              Cloudflare Worker entry and image-optimization route
 .openai/hosting.json    Sites project and optional logical storage bindings
+SEARCH_TOOL_RESEARCH.md Verified source notes for work-setup and compensation guidance
 vite.config.ts          Vinext, Sites, and Cloudflare build configuration
 ~~~
 
@@ -137,10 +140,12 @@ For every maintained file and when to edit it, see [FILE_MAP.md](FILE_MAP.md).
 - the five college-year IDs and their visible/audience labels;
 - allowed resource IDs, formats, and tags;
 - the Resource interface;
-- all 62 resource records, including the Technology-focused Underclassmen Opportunities collection;
+- all 64 resource records, including the Technology-focused Underclassmen Opportunities collection plus HiringCafe and Himalayas;
 - the derived featured-resource list and category helper.
 
 The optional `recommendedForYears` field marks years for which a resource is an especially useful starting point. It is editorial resource-level guidance, not a claim that every opportunity at that destination accepts students in those years.
+
+The “Search your way” section does not create a second catalog. A small typed `ResourceId` mapping in `app/CareerGuide.tsx` resolves Handshake and Himalayas for work setup/location, then HiringCafe and USAJOBS Early Careers for compensation. Simplify remains a featured catalog resource but is not one of the four compact links. Verified capability claims and the deeper candidate review are recorded in [SEARCH_TOOL_RESEARCH.md](SEARCH_TOOL_RESEARCH.md).
 
 To add a resource:
 
@@ -186,6 +191,7 @@ Do not configure a static host to publish dist/client/ by itself: it has no stan
 - [FEATURES.md](FEATURES.md) — implemented behavior and explicit non-goals
 - [FILE_MAP.md](FILE_MAP.md) — repository navigation guide
 - [RESOURCE_GUIDE.md](RESOURCE_GUIDE.md) — resource curation and schema reference
+- [SEARCH_TOOL_RESEARCH.md](SEARCH_TOOL_RESEARCH.md) — dated evidence for the work-setup and compensation guidance
 - [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) — visual language, components, and motion
 - [TESTING.md](TESTING.md) — automated coverage and manual QA
 - [DEPLOYMENT.md](DEPLOYMENT.md) — verified build and deployment guidance

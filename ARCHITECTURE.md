@@ -15,6 +15,9 @@ flowchart TD
     Page --> Guide["app/CareerGuide.tsx<br/>server-rendered, then hydrated"]
 
     Data["app/data/resources.ts<br/>categories + college years + resources"] --> Guide
+    Guide --> Focused["typed ResourceId mapping<br/>Search your way"]
+    Data --> Focused
+    Focused --> External
     Data --> Indexes["normalized resource and category indexes"]
     Indexes --> Derived["query + category + college year + show-all state"]
     Derived --> Cards["derived visible resource cards"]
@@ -84,8 +87,9 @@ The product intentionally keeps closely related UI in `app/CareerGuide.tsx` rath
 
 | Unit | Role |
 | --- | --- |
-| `CareerGuide` | Owns client state and renders the complete page: header, hero, guidance, featured resources, career paths, college-year browsing, library, tips, about section, footer, and suggestion dialog. |
+| `CareerGuide` | Owns client state and renders the complete page: header, hero, guidance, featured resources, career paths, college-year browsing, focused search-tool guidance, library, tips, about section, footer, and suggestion dialog. |
 | `ResourceCard` | Renders both featured and regular resource records, including format, cadence, description, best-for content, tags, notes, and external action. |
+| `SearchToolCard` | Renders a compact existing resource in “Search your way.” It receives a canonical `Resource` object resolved from the typed intent mapping rather than duplicating destination metadata. |
 | `CategoryMark` | Maps controlled category icon names to CSS-styled text marks. |
 | `Pinwheel` | Decorative, CSS-animated pinwheel with a configurable spin duration. |
 | `Tree` | Decorative, CSS-animated tree. |
@@ -110,7 +114,9 @@ The remaining scene elements are local decorative spans. Keeping them with the p
 
 The data uses `readonly` contracts and `as const satisfies` to preserve literal values while checking record shape. `resourceIds` and the `resources` array are separately authored; the tests require them to contain the same IDs in the same order. A resource may have `recommendedForYears`, which means the destination is an especially useful starting point for those students; it does not assert job-level eligibility.
 
-At present there are 13 categories and 62 resources. The added Underclassmen Opportunities record is a non-featured Technology resource recommended for freshmen and sophomores. Counts shown in the hero, category cards, year controls, results copy, and show-all button are derived from the arrays rather than duplicated constants.
+At present there are 13 categories and 64 resources. Underclassmen Opportunities is a non-featured Technology resource recommended for freshmen and sophomores; HiringCafe and Himalayas are non-featured General / Any Major resources. Counts shown in the hero, category cards, year controls, results copy, and show-all button are derived from the arrays rather than duplicated constants.
+
+“Search your way” is intentionally outside the filter/state flow. `CareerGuide.tsx` builds a `Map<ResourceId, Resource>` from `resources`, and a small `searchToolIntents` constant references `handshake` and `himalayas` for work setup/location, then `hiringcafe` and `usajobs-early-careers` for compensation. This keeps identity, URL, description, format, and search aliases in the canonical dataset while allowing intent-specific headings and verified capability copy in the page. It does not expand the `Resource` interface or create a second resource inventory.
 
 For schema and editorial rules, see [RESOURCE_GUIDE.md](RESOURCE_GUIDE.md).
 
@@ -168,6 +174,8 @@ The direct-match-first behavior is important. A specialist query such as “heal
 
 Selecting a large career-path or college-year card also scrolls to the library and focuses the search input. That scroll uses `auto` instead of `smooth` when the visitor prefers reduced motion.
 
+The static “Search your way” section renders between college-year browsing and the library. Its cards are normal external anchors and do not read or update any of the four state values above.
+
 ## Persistence and backend boundaries
 
 The application has no persistent visitor state:
@@ -222,7 +230,7 @@ The design is responsive rather than route- or device-specific: grids collapse, 
 
 - The product's value is editorial curation and findability, not data transactions.
 - One typed module is easier to review than a database-backed administration system for the current catalog size.
-- Client-side search is immediate and inexpensive for 62 records.
+- Client-side search is immediate and inexpensive for 64 records.
 - Derived views prevent counts and featured lists from drifting away from source data.
 - Server-rendered initial HTML preserves content and metadata while one client component supplies the necessary interactivity.
 - A stateless Worker keeps deployment compatible with the existing Sites/Vinext build without inventing storage needs.

@@ -1,10 +1,10 @@
 # Testing
 
-Where to Look uses a small test system matched to its deliberately simple architecture. Automated checks protect the curated dataset, specialist-first search behavior, college-year guidance, healthcare coverage, and the server-rendered page. Manual review covers interaction and visual behavior that the current suite does not automate.
+Where to Look uses a small test system matched to its deliberately simple architecture. Automated checks protect the curated dataset, specialist-first search behavior, work-setup and compensation discovery, college-year guidance, healthcare coverage, and the server-rendered page. Manual review covers interaction and visual behavior that the current suite does not automate.
 
 ## Tools and locations
 
-- `tests/rendered-html.test.mjs` contains all five current top-level tests.
+- `tests/rendered-html.test.mjs` contains all six current top-level tests.
 - Node's built-in `node:test` runner executes the suite.
 - `node:assert/strict` provides assertions.
 - The TypeScript compiler API transpiles `app/data/resources.ts` in memory so the tests inspect the real exported data rather than a duplicate fixture.
@@ -39,7 +39,7 @@ Do not run the Node test file against stale output. Its rendered-page test impor
 
 The dataset test verifies:
 
-- 13 category records and 62 resource records
+- 13 category records and 64 resource records
 - unique category IDs, resource IDs, and resource URLs
 - alignment between the exported ID lists and data arrays
 - the exact college-year ID order: `freshman`, `sophomore`, `junior`, `senior`, `new-grad`
@@ -50,7 +50,7 @@ The dataset test verifies:
 - only known category IDs
 - only known, nonrepeating college-year IDs in optional `recommendedForYears` arrays
 - at least one resource in every category
-- at least one recommended resource for every college year and intentional assignments on representative resources
+- at least one recommended resource for every college year, intentional assignments on representative resources, and the rendered counts: 12 Freshmen, 13 Sophomores, 15 Juniors, 19 Seniors, and 16 New Grads
 - the exact five intended featured resources
 
 These are structural checks. They do not make network requests, so a passing test does not prove that an external destination is currently live or that its content still supports the description.
@@ -61,11 +61,15 @@ The search test mirrors the client algorithm and verifies the required majors an
 
 Because the helper mirrors implementation code rather than importing it from `CareerGuide.tsx`, update both places together when the algorithm changes.
 
+### Work-setup and compensation discovery
+
+The focused-search test verifies that work-setting, nearby, and job-type phrases can find Handshake; `time zone` and `work from home` can find Himalayas; salary-filter and compensation phrases can find Simplify; `disclosed salary` and `no experience` can find HiringCafe; and minimum-salary phrases can find both HiringCafe and USAJOBS Early Careers. It protects the evidence boundary by requiring `highest salary` to return exactly HiringCafe, Himalayas, and USAJOBS—the three resources with verified salary-order controls.
+
 ### College-year guidance
 
 The college-year test verifies that year guidance composes with the existing filters instead of bypassing them. It covers:
 
-- all 62 resources when category, year, and query are unrestricted;
+- all 64 resources when category, year, and query are unrestricted;
 - a Technology + Sophomore result narrowed to the intended underclassmen resource;
 - a Sophomore + `research` query retaining a strong research resource;
 - category + year + query intersections for underclassmen technology and new-grad healthcare;
@@ -87,7 +91,9 @@ The production-page test invokes the built Worker and verifies:
 - important page headings and copy in server-rendered HTML
 - the Browse by College Year heading and eligibility guidance
 - all five year labels and the default pressed “All years” control
-- the 62-resource expansion control
+- the “Search your way” heading, both intent headings, verified salary-sort wording, and placement between year browsing and the library
+- canonical Handshake, Himalayas, HiringCafe, and USAJOBS Early Careers links within that section
+- the 64-resource expansion control
 - absence of starter-preview content
 - server-rendered external resource links
 - `noopener noreferrer` on links that open a new tab
@@ -108,9 +114,10 @@ The production-page test invokes the built Worker and verifies:
 
 - Load the page with no console-visible failure.
 - Confirm the sticky navigation reaches each labeled section.
-- Confirm the first 12 library resources appear by default and the expansion control reveals all 62.
+- Confirm the first 12 library resources appear by default and the expansion control reveals all 64.
 - Confirm Browse by College Year shows Freshman, Sophomore, Junior, Senior, and New Grad with counts derived from the current dataset.
 - Choose each year and confirm it applies the matching library filter, collapses an expanded list, scrolls to the library, and focuses search.
+- Confirm “Search your way” appears after college-year browsing and before the library, with two balanced intent panels and four compact canonical resource links.
 - Inspect the hero, category grid, cards, tips, footer, and dialog at a wide viewport.
 - Confirm no text clips at large browser zoom.
 
@@ -119,6 +126,7 @@ The production-page test invokes the built Worker and verifies:
 - Inspect at 320 CSS pixels and at a representative modern phone width.
 - Confirm the header navigation and both library filter rows scroll within their own rows.
 - Confirm the Browse by College Year panel stacks by 1050px, its five controls use three columns by 820px and two by 580px, and labels, counts, and focus outlines do not clip.
+- Confirm the search-intent panels stack by 820px, compact-card actions remain below their text, and each panel's paired tool cards stack by 580px, including at 390px and 320px.
 - Confirm cards use one column and buttons remain usable.
 - Confirm the illustration does not cover copy or controls.
 - Confirm the document has no unintended horizontal page overflow.
@@ -128,6 +136,7 @@ The production-page test invokes the built Worker and verifies:
 - Search a broad term such as `business`.
 - Search a specialist term such as `healthcare management` and confirm the result stays focused instead of expanding to the entire Healthcare category.
 - Search `AI`, `IT`, `PR`, and `HR` and check that unrelated substring matches do not appear.
+- Search representative new aliases: `remote jobs`, `hybrid jobs`, `jobs near me`, `time zone`, `work from home`, `salary filter`, `disclosed salary`, `no experience`, `minimum salary`, and `highest salary`; confirm the intended reviewed destinations appear.
 - Combine a query with a category filter.
 - Combine a query with both a category and college-year filter; confirm every result satisfies all three dimensions.
 - Confirm the live result status names the active category, year audience, and query, with the correct count.
@@ -140,6 +149,7 @@ The production-page test invokes the built Worker and verifies:
 
 - Open a sample of general, specialist, government, association, and GitHub resources.
 - Confirm each destination is live, accurately described, and useful to students.
+- Recheck the four “Search your way” destination claims against [`SEARCH_TOOL_RESEARCH.md`](SEARCH_TOOL_RESEARCH.md), including Himalayas' remote-only scope and USAJOBS' federal-only salary sort.
 - Confirm links open a new tab without giving the new page access to `window.opener`.
 - Recheck any visible update-frequency claim against its source.
 

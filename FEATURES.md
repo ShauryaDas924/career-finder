@@ -2,7 +2,7 @@
 
 Where to Look is a curated directory of external internship and early-career resources. It helps college students decide where to search; it does not host, copy, scrape, or accept applications for jobs.
 
-The current dataset contains **62 resources across 13 broad career categories**. Counts shown in the interface are derived from [`app/data/resources.ts`](app/data/resources.ts), not duplicated in the component.
+The current dataset contains **64 resources across 13 broad career categories**. Counts shown in the interface are derived from [`app/data/resources.ts`](app/data/resources.ts), not duplicated in the component.
 
 ## Directory and discovery
 
@@ -22,6 +22,14 @@ The current categories are Technology; Business; Finance & Risk; Healthcare; Eng
 
 **Why it exists:** Students can find more relevant places to search without turning the directory into a job board or pretending to have job-level eligibility data. The catalog includes Underclassmen Opportunities as a Technology resource specifically recommended for freshmen and sophomores.
 
+### “Search your way” guidance
+
+**What it does:** Adds a compact static section between college-year browsing and the full library. “Work where you want” points to Handshake for student-focused location/radius, on-site/remote/hybrid, and job-type discovery, plus Himalayas for remote country/time-zone, early-career, salary-range, and salary-order controls. “Compare the pay” points to HiringCafe for broad location/work-setting, minimum/disclosed-pay, and **Highest salary** controls, plus USAJOBS Early Careers for minimum-pay filtering and the federal-only **Highest salary** sort.
+
+**What it does not do:** It does not filter, sort, rank, host, or copy opportunities inside Whoopberry. It adds no state, schema field, account, saved search, or backend. HiringCafe and Himalayas are ordinary canonical catalog records rather than a separate data source. External services own their filters and listings, and the visible note tells students to confirm work setup and compensation on the original posting.
+
+**Why it exists:** Students often begin with a practical constraint rather than a major. Reusing four canonical resource records gives those students a clear next step without duplicating destination names, URLs, or descriptions. Simplify remains featured in the full catalog, but HiringCafe covers the compact section's broad compensation role more completely while USAJOBS adds a distinct federal path. See [`SEARCH_TOOL_RESEARCH.md`](SEARCH_TOOL_RESEARCH.md) for the dated evidence, hidden-gem pass, and candidate review.
+
 ### Resource cards
 
 **What they do:** Each card identifies the resource name, destination type, description, intended uses, up to four visible tags, and an external visit link. A card can also show a verified update-frequency badge or an editorial note when those optional fields are present.
@@ -36,7 +44,7 @@ The current categories are Technology; Business; Finance & Risk; Healthcare; Eng
 
 ### Progressive disclosure
 
-**What it does:** The unfiltered library initially renders the first 12 resources and offers a button to show all 62. A search, category selection, or college-year selection displays all matching results immediately.
+**What it does:** The unfiltered library initially renders the first 12 resources and offers a button to show all 64. A search, category selection, or college-year selection displays all matching results immediately.
 
 **Why it exists:** The first visit remains approachable while the complete directory is still one action away.
 
@@ -47,6 +55,8 @@ The current categories are Technology; Business; Finance & Risk; Healthcare; Eng
 **What it does:** Searches a normalized index of each resource's name, description, format, tags, `bestFor` text, and `searchTerms`. Search is case-insensitive and preserves useful characters such as `+`, `#`, and `/`.
 
 Career category and college year first scope the resource set. Within that scope, direct resource matches are returned first. Only when there are no direct matches does search fall back to category labels, short labels, and category keywords. One- and two-character alphanumeric searches, such as `AI`, `IT`, `PR`, and `HR`, require whole-token matches instead of matching arbitrary substrings.
+
+Handshake, Himalayas, HiringCafe, Simplify, and USAJOBS Early Careers include targeted aliases for work setup, location, job type, salary, compensation, and pay. Exact `highest salary` searches resolve only to HiringCafe, Himalayas, and USAJOBS Early Careers because those are the reviewed destinations with verified salary-order controls. Simplify retains salary-filter and target-range aliases without claiming a high-to-low sort.
 
 **Why it exists:** A specific query should surface specialist destinations rather than expanding to every resource in a broad category. Category fallback still provides a useful path for broader terms.
 
@@ -88,7 +98,7 @@ See [`RESOURCE_GUIDE.md`](RESOURCE_GUIDE.md) for the indexing and curation rules
 
 ### Responsive single-page navigation
 
-**What it does:** Uses a sticky header and anchor navigation for Start Here, Paths, Resources, Tips, and About. Layouts collapse from multi-column grids to a single column, and the smallest navigation and filter rows scroll horizontally instead of forcing page overflow.
+**What it does:** Uses a sticky header and anchor navigation for Start Here, Paths, Resources, Tips, and About. Layouts collapse from multi-column grids to a single column, including the two “Search your way” intent cards at 820px and below. Each compact search-tool card keeps its action below the text; at 580px and below, the paired tool cards also stack into one column while navigation and filter rows scroll horizontally instead of forcing page overflow.
 
 **Why it exists:** The same directory remains usable on wide desktop screens, tablets, and narrow phones.
 

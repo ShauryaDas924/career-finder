@@ -20,6 +20,14 @@ Move completed entries into a versioned section when a release is actually made.
 
 - Browse by College Year controls for combining optional resource-level year guidance with career-category filters and text search; individual-opportunity eligibility must still be verified at the original source.
 - Underclassmen Opportunities as a technology-focused resource for freshmen and sophomores.
+- A compact “Search your way” section that uses Handshake and Himalayas for work setup/location guidance, then HiringCafe and USAJOBS Early Careers for compensation-focused discovery, without adding listings or application behavior.
+- HiringCafe and Himalayas as non-featured General / Any Major resources, bringing the catalog to 64 while preserving 13 categories and five featured starting points.
+- Dated first-party research notes with a dedicated hidden-gem pass, exact salary-filter/sort distinctions, access/currentness notes, and the federal-only scope of USAJOBS' verified **Highest salary** sort.
+
+### Changed
+
+- Expanded the reviewed records' factual descriptions and search aliases so work-setup, location, job-type, salary, compensation, and pay queries find the intended destinations. The resource total changed from 62 to 64; category, featured, and schema totals are unchanged.
+- Kept Simplify featured and searchable while moving the compact compensation mapping to HiringCafe plus the distinct federal USAJOBS specialist.
 
 ## [0.1.0] — Initial completed product (date not recorded)
 
