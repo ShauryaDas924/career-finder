@@ -120,6 +120,12 @@ The Browse by College Year section is a bordered paper panel with explanatory co
 
 The explorer is a paper panel with a visible label above a pill search input and separate fieldset/legend groups for career-path and college-year chips. Category, year, and query states compose. Active chips use navy with cream text, a coral offset shadow, and a visible checkmark. The result line reflects all active dimensions, and reset actions return the explorer to All paths, All years, an empty query, and the first 12 resources. Mobile filter-chip rows remain independently horizontally scrollable.
 
+### Focused search-tool guidance
+
+“Search your way” sits between college-year browsing and the library. Its two bordered intent panels reuse the established pale blue and mint surfaces, navy outlines, rounded corners, and crisp offset shadow. A small CSS location mark and a small CSS pay mark support the headings; both are decorative and hidden from assistive technology. Compact paper cards inside each panel reuse the canonical resource format mark, serif destination name, factual description, and dark external-link pill.
+
+The section is guidance, not another filter surface: the intent panels are not interactive containers, have no selected state, and do not introduce a competing control style. The two-column intent grid becomes one column at 820px. Compact resource cards keep a one-column internal layout with a full-width action at every size; at 580px and below, each panel's two-card tool list also becomes one column.
+
 ### Guidance panels and dialog
 
 The Start Here sequence uses numbered pastel circles and a dashed coral route. The tips board resembles clipped stationery. The About panel pairs a target illustration with short product copy. The suggestion dialog uses the same cream, navy, pink-shadow, and rounded-card vocabulary.
@@ -155,14 +161,14 @@ When adding motion:
 
 The stylesheet has breakpoints at 1050px, 820px, and 580px.
 
-- **Above 1050px:** two-column hero, four-column category grid, three-column resource grid, and two-column featured grid.
+- **Above 1050px:** two-column hero, four-column category grid, three-column resource grid, two-column featured grid, and two-column search-intent grid.
 - **1050px and below:** the hero remains two-column at narrower proportions; categories move to three columns, resources to two columns, the Start Here introduction and Browse by College Year panel stack, and the footer grid simplifies.
-- **820px and below:** the hero and featured cards become one-column; categories use two columns; the college-year cards use three columns; and the search/filter panel, Start Here steps, and tips board stack. The About panel keeps its target and heading side by side while its body copy moves below them.
-- **580px and below:** 12px page gutters, single-column categories and resources, a two-column Browse by College Year card grid, full-width hero actions and resource links, horizontal navigation/filter scrolling, simplified scenery, one-column tips/footer, and tighter panels.
+- **820px and below:** the hero and featured cards become one-column; categories use two columns; the college-year cards use three columns; and the search-intent grid, search/filter panel, Start Here steps, and tips board stack. The About panel keeps its target and heading side by side while its body copy moves below them.
+- **580px and below:** 12px page gutters, single-column categories and resources, a two-column Browse by College Year card grid, one-column search-tool lists with full-width actions, full-width hero actions and resource links, horizontal navigation/filter scrolling, simplified scenery, one-column tips/footer, and tighter panels.
 
 `html` clips horizontal overflow and `body` hides it as a final guard, but individual components should still be sized correctly. Test at 320px rather than relying on the overflow guard.
 
-When changing the year controls, verify that all five labels and counts fit without clipping at desktop, tablet, 390px, and 320px widths; that each library filter row scrolls independently on mobile; and that active, hover, focus, and reduced-motion states remain consistent with the existing control language.
+When changing the year controls or focused search-tool cards, verify that labels, descriptions, and actions fit without clipping at desktop, tablet, 390px, and 320px widths; that each library filter row scrolls independently on mobile; and that active, hover, focus, and reduced-motion states remain consistent with the existing control language.
 
 ## Patterns to avoid
 

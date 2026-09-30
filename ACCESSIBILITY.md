@@ -1,6 +1,6 @@
 # Accessibility
 
-Where to Look uses native HTML and deliberately nonessential decoration so its main tasks—navigating, browsing by college year, searching, filtering, reading resource context, and opening an external destination—remain available without the illustrated layer.
+Where to Look uses native HTML and deliberately nonessential decoration so its main tasks—navigating, browsing by college year, choosing focused search tools, searching, filtering, reading resource context, and opening an external destination—remain available without the illustrated layer.
 
 This document describes implemented safeguards and the manual checks expected for future changes. It is not a formal WCAG conformance claim, and the current automated tests are not a complete accessibility audit.
 
@@ -10,13 +10,13 @@ This document describes implemented safeguards and the manual checks expected fo
 
 - The root document declares `lang="en"`.
 - The page uses `header`, labeled `nav` elements, `main`, labeled `section` elements, `article` resource cards, and `footer`.
-- The page has one `h1`; major sections use `h2`; resource and empty-state titles use `h3`.
+- The page has one `h1`; major sections use `h2`; intent, resource, and empty-state titles use `h3`; compact search-tool names use `h4` beneath their intent heading.
 - Ordered and unordered lists represent the step sequence, tags, and tips.
 - A “Skip to main content” link becomes visible when focused and targets `#main-content`.
 
 ### Keyboard interaction and focus
 
-- Navigation, category cards, college-year cards, filter chips, search controls, show-more/reset actions, external links, footer actions, and dialog actions use native anchors, buttons, or inputs.
+- Navigation, category cards, college-year cards, filter chips, search controls, show-more/reset actions, focused search-tool links, external links, footer actions, and dialog actions use native anchors, buttons, or inputs.
 - A global `:focus-visible` rule provides a 3px `--coral-dark` outline with a 4px offset.
 - The skip link moves into view on focus.
 - Search receives an additional visible border and focus ring.
@@ -47,9 +47,11 @@ The college-year language describes resources that are especially useful for an 
 - The external link name includes the destination and “opens in a new tab.”
 - External resource links use `target="_blank"` with `rel="noopener noreferrer"`.
 
+The “Search your way” intent panels are semantic nested sections labelled by their visible `h3` headings. Their compact cards reuse the canonical resource object and a normal external anchor with the same new-tab warning and safety attributes as library cards. The panels are not controls and do not expose a false pressed or selected state.
+
 ### Decorative artwork
 
-The hero and footer scenery, pinwheels, brand marks, targets, category marks, search icon, sparkles, and other ornaments are hidden with `aria-hidden="true"` at the component or containing-scene level. They do not contain required instructions or state.
+The hero and footer scenery, pinwheels, brand marks, targets, category marks, search icon, focused-search location/pay marks, sparkles, and other ornaments are hidden with `aria-hidden="true"` at the component or containing-scene level. They do not contain required instructions or state.
 
 The in-page illustration system is CSS and HTML, not SVG. If an SVG is added later:
 
@@ -66,7 +68,7 @@ No automated contrast assertion exists in the current suite. Recheck contrast wh
 
 ### Responsive and zoom behavior
 
-The content shell and grids reflow at 1050px, 820px, and 580px. Resource and category grids become single-column on narrow screens. The Browse by College Year panel stacks at 1050px; its five-button grid uses three columns at 820px and two at 580px. Navigation and both library filter rows become horizontally scrollable where wrapping would make them unusable. Page-level horizontal overflow is clipped/hidden, so QA must verify that no content is merely being cut off.
+The content shell and grids reflow at 1050px, 820px, and 580px. Resource and category grids become single-column on narrow screens. The Browse by College Year panel stacks at 1050px; its five-button grid uses three columns at 820px and two at 580px. The two focused-search intent panels become one column at 820px. Each compact resource card keeps its link below the text at every width, and each panel's paired tool cards become one column at 580px. Navigation and both library filter rows become horizontally scrollable where wrapping would make them unusable. Page-level horizontal overflow is clipped/hidden, so QA must verify that no content is merely being cut off.
 
 Primary pill buttons are at least 50px tall. Mobile filter chips are at least 40px tall. Preserve generous targets and spacing when adding compact controls.
 
@@ -98,10 +100,11 @@ A keyboard-only pass should be able to:
 7. select “All paths,” “All years,” and individual category/year filters and perceive each selected state;
 8. combine category, year, and query filters and hear or observe the updated result status;
 9. use Clear filters and zero-result recovery, with focus returning to search;
-10. expand and collapse the default resource list;
-11. reach every visible resource link;
-12. open and close the suggestion dialog, including with Escape;
-13. continue through footer navigation without a keyboard trap.
+10. reach the four focused search-tool links in reading order;
+11. expand and collapse the default resource list;
+12. reach every visible resource link;
+13. open and close the suggestion dialog, including with Escape;
+14. continue through footer navigation without a keyboard trap.
 
 Focus should never disappear behind the sticky header or be indicated only by a subtle color shift.
 
@@ -129,6 +132,7 @@ Run this checklist for meaningful interface, content, or styling changes.
 - [ ] Confirm result changes are announced once and without excessive repeated content.
 - [ ] Confirm a combined category + year + query result status announces all active dimensions clearly.
 - [ ] Confirm resource cards have understandable headings, tag-list labels, and new-tab link warnings.
+- [ ] Confirm the “Search your way” section, both intent panels, and compact resource names form a logical heading outline and each link announces the destination and new tab.
 - [ ] Confirm decorative scenery and icons are absent from the accessibility tree.
 - [ ] Confirm the dialog has the “Know a resource we should add?” accessible title.
 
@@ -139,6 +143,7 @@ Run this checklist for meaningful interface, content, or styling changes.
 - [ ] Check desktop, tablet, 390px mobile, and 320px mobile layouts.
 - [ ] Confirm navigation and filters can be horizontally scrolled when necessary.
 - [ ] Confirm the five Browse by College Year controls fit at desktop/tablet widths, use three columns by 820px, and reflow to two columns at 580px and below without clipped labels, counts, or focus outlines.
+- [ ] Confirm focused-search intent panels stack at 820px, compact-card actions remain below their text, and the paired tool cards stack at 580px without clipped copy, links, or focus outlines.
 - [ ] Confirm cards, dialog content, focus outlines, and long resource names are not clipped.
 - [ ] Confirm there is no unintended horizontal page overflow.
 
@@ -158,6 +163,6 @@ Run this checklist for meaningful interface, content, or styling changes.
 
 ## Automated coverage and limits
 
-[`tests/rendered-html.test.mjs`](tests/rendered-html.test.mjs) currently verifies the English document language, the five college-year IDs and labels, valid year assignments, category + year + query composition, the default pressed “All years” control, and safe server-rendered external links. These checks support accessible, predictable result states.
+[`tests/rendered-html.test.mjs`](tests/rendered-html.test.mjs) currently verifies the English document language, the five college-year IDs and labels, valid year assignments, category + year + query composition, the default pressed “All years” control, the labelled “Search your way” section and its canonical links, and safe server-rendered external links. These checks support accessible, predictable result states.
 
 It does not currently run axe, a browser screen reader, contrast analysis, tab-order assertions, zoom checks, or reduced-motion emulation. Treat the manual checklist as required until equivalent automated coverage is added. Review test commands and broader QA expectations in [`TESTING.md`](TESTING.md).
