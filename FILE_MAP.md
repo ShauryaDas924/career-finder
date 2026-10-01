@@ -17,6 +17,8 @@ Where to Look is compact by design. Product source lives in `app/`, deployment i
 │   └── page.tsx
 ├── build/
 │   └── sites-vite-plugin.ts
+├── docs/
+│   └── RESOURCE_SAFETY_AUDIT.md
 ├── public/
 │   ├── favicon.png
 │   └── og.png
@@ -63,7 +65,7 @@ Where to Look is compact by design. Product source lives in `app/`, deployment i
 
 | Path | Purpose | Edit when… |
 | --- | --- | --- |
-| `tests/rendered-html.test.mjs` | Six-test Node suite. Transpiles the TypeScript data module for direct inspection, independently models category/year-scoped search, invokes the built Worker, and verifies resource and year-metadata integrity, combined-filter behavior, required and focused search coverage, healthcare behavior, metadata, rendered content, focused-section placement/links, and external-link safety. | Resource totals/coverage or year guidance intentionally change, search/filter behavior changes, focused search-tool claims change, a regression is fixed, or new critical behavior needs coverage. |
+| `tests/rendered-html.test.mjs` | Six-test Node suite. Transpiles the TypeScript data module for direct inspection, independently models category/year-scoped search, invokes the built Worker, and verifies resource and year-metadata integrity, combined-filter behavior, required and focused search coverage, healthcare behavior, metadata, rendered content and safety guidance, focused-section placement/links, and external-link safety. | Resource totals/coverage or year guidance intentionally change, search/filter behavior changes, focused search-tool claims or public safety copy change, a regression is fixed, or new critical behavior needs coverage. |
 | `eslint.config.mjs` | ESLint flat configuration using Next core-web-vitals and TypeScript rules, with generated/build paths ignored. | Changing lint policy or adding a generated path that should not be linted. |
 | `tsconfig.json` | Strict TypeScript configuration, DOM/ES libraries, bundler module resolution, Next plugin, and `@/*` path alias. | Changing compiler scope or module/type policy. |
 | `package.json` | Node engine requirement (`>=22.13.0`), npm scripts, application dependencies, and build/test tooling. | Adding/removing a dependency, changing a script, or changing the supported Node runtime. |
@@ -86,6 +88,7 @@ Where to Look is compact by design. Product source lives in `app/`, deployment i
 | `FEATURES.md` | Current product capabilities and explicit non-goals. |
 | `RESOURCE_GUIDE.md` | Resource schema, curation standards, taxonomy philosophy, and add/update workflow. |
 | `SEARCH_TOOL_RESEARCH.md` | Dated first-party evidence, serious-candidate and hidden-gem decisions, salary-filter/sort distinctions, access/currentness boundaries, and claim limits for work-setup and compensation guidance. |
+| `docs/RESOURCE_SAFETY_AUDIT.md` | Dated catalog-wide evidence for operator identity, canonical URLs, maintenance, student relevance, moderation/reporting, risk notes, and keep/caution/remove/replace decisions. It audits destinations, not every external listing. |
 | `DESIGN_SYSTEM.md` | Visual tokens, typography, components, illustration, motion, and responsive principles. |
 | `TESTING.md` | Automated coverage, commands, and manual QA expectations. |
 | `DEPLOYMENT.md` | Build artifact and maintained release procedure for the configured hosting model. |

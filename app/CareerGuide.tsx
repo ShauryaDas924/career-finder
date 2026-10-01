@@ -518,7 +518,7 @@ export default function CareerGuide() {
                 <h2 id="featured-title">Great places to start</h2>
               </div>
               <p>
-                Five broad, student-friendly starting points when you just want
+                Four broad, student-friendly starting points when you just want
                 to get moving.
               </p>
             </div>
@@ -893,7 +893,11 @@ export default function CareerGuide() {
               <div className="tips-board__heading">
                 <span className="section-stamp">A NOTE FOR YOUR SEARCH</span>
                 <h2 id="tips-title">A few things worth remembering</h2>
-                <p>Keep it simple, consistent, and wider than one job board.</p>
+                <p>
+                  Whoopberry curates useful places to search, but individual
+                  opportunities are maintained by external services and should be
+                  independently verified.
+                </p>
                 <span className="paperclip" aria-hidden="true" />
               </div>
               <ul className="tip-list">
@@ -901,6 +905,7 @@ export default function CareerGuide() {
                 <li><span>02</span><div><b>Use several sources.</b><p>Two or three good tabs beat endlessly refreshing one.</p></div></li>
                 <li><span>03</span><div><b>Turn on alerts.</b><p>Saved searches make a regular routine much easier.</p></div></li>
                 <li><span>04</span><div><b>Check the source.</b><p>When possible, apply through the employer&apos;s careers page.</p></div></li>
+                <li><span>05</span><div><b>Unexpected coding test? Verify it first.</b><p>If a recruiter asks you to clone an unfamiliar repo, install packages, run scripts, containers, or binaries, confirm the assessment through the company&apos;s official domain before executing it.</p></div></li>
               </ul>
             </div>
           </div>

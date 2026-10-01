@@ -21,13 +21,32 @@ Move completed entries into a versioned section when a release is actually made.
 - Browse by College Year controls for combining optional resource-level year guidance with career-category filters and text search; individual-opportunity eligibility must still be verified at the original source.
 - Underclassmen Opportunities as a technology-focused resource for freshmen and sophomores.
 - A compact “Search your way” section that uses Handshake and Himalayas for work setup/location guidance, then HiringCafe and USAJOBS Early Careers for compensation-focused discovery, without adding listings or application behavior.
-- HiringCafe and Himalayas as non-featured General / Any Major resources, bringing the catalog to 64 while preserving 13 categories and five featured starting points.
+- HiringCafe and Himalayas as non-featured General / Any Major resources while preserving the 13-category taxonomy.
 - Dated first-party research notes with a dedicated hidden-gem pass, exact salary-filter/sort distinctions, access/currentness notes, and the federal-only scope of USAJOBS' verified **Highest salary** sort.
+- A maintained destination-level safety audit covering ownership, canonical URLs, maintenance, student relevance, reporting or moderation evidence, risk notes, and an explicit decision for every resource reviewed.
+- A native search-tip reminder that individual opportunities on external services require independent verification, including calm guidance to confirm unexpected repositories, package installs, scripts, containers, or binaries through the company's official domain before executing them.
 
 ### Changed
 
-- Expanded the reviewed records' factual descriptions and search aliases so work-setup, location, job-type, salary, compensation, and pay queries find the intended destinations. The resource total changed from 62 to 64; category, featured, and schema totals are unchanged.
+- Expanded the reviewed records' factual descriptions and search aliases so work-setup, location, job-type, salary, compensation, and pay queries find the intended destinations.
 - Kept Simplify featured and searchable while moving the compact compensation mapping to HiringCafe plus the distinct federal USAJOBS specialist.
+- Reconciled the catalog after the safety review to 62 resources, 13 categories, and four featured starting points, with updated college-year and category counts.
+- Corrected or narrowed factual metadata and useful caveats, including ApplyGuy's documented cadence, the Jobright finance collection's display name, Dreamwork's supported disciplines, destination-specific application cautions, and SelectLeaders' category assignment from General / Any Major to Business only.
+- Broadened LinkedIn and Simplify's resource-level college-year guidance while preserving the requirement to verify eligibility on each original opportunity.
+
+### Fixed
+
+- Normalized the BioSpace destination to its canonical `jobs.biospace.com` URL.
+
+### Removed
+
+- The stale, redundant Vansh Summer 2027 internship tracker; the stronger maintained Simplify/Pitt collection remains.
+- InternList, whose application links resolve through Simplify; the existing Simplify resource is the canonical replacement rather than a duplicate record.
+
+### Security
+
+- Reviewed all 64 pre-audit destinations without cloning or executing unknown repository content, documented the evidence and limitations, and distinguished destination-level curation from any guarantee about individual listings.
+- Added actionable public guidance for unexpected developer assessments that ask students to run unfamiliar code or tools.
 
 ## [0.1.0] — Initial completed product (date not recorded)
 

@@ -4,7 +4,7 @@
 
 Where to Look is a curated field guide to internship and early-career resources for college students who are unsure where to begin. It organizes reliable starting points by broad career path, explains what each source is useful for, and sends students to the organization that maintains the opportunity.
 
-It is deliberately **not a job board**. The application does not scrape, copy, host, or accept applications for job listings.
+It is deliberately **not a job board**. The application does not scrape, copy, host, or accept applications for job listings. Whoopberry reviews resource destinations as useful places to search; it does not audit every opportunity those external services publish. Students should independently verify the employer, role, and application route before sharing sensitive information or running code.
 
 ## What problem it solves
 
@@ -17,7 +17,7 @@ Career information is scattered across professional associations, government por
 5. Learn what each resource is best for.
 6. Continue to the original source and confirm eligibility details there.
 
-The current directory contains **64 resources across 13 visible career families**:
+The current directory contains **62 resources across 13 visible career families**:
 
 - Technology
 - Business
@@ -38,7 +38,7 @@ Specific majors such as healthcare management, nursing, civil engineering, actua
 ## Current features
 
 - Five-step “Start Here” guidance for students beginning a search
-- Five editorially selected featured resources
+- Four editorially selected featured resources
 - Career-family cards with live resource counts
 - College-year browsing for Freshman, Sophomore, Junior, Senior, and New Grad
 - A compact “Search your way” guide to existing resources for work setup/location and compensation-focused searches
@@ -48,6 +48,7 @@ Specific majors such as healthcare management, nursing, civil engineering, actua
 - A 12-card starting set with an accessible expand/collapse control for all resources
 - Empty-state and clear-filter recovery
 - Safe external links with descriptive accessible names
+- Calm guidance for independently verifying listings and unexpected technical assessments
 - Responsive layouts tested down to 320 CSS pixels
 - Keyboard focus management, semantic controls, status announcements, and a skip link
 - Lightweight CSS illustration and motion with reduced-motion support
@@ -125,6 +126,8 @@ tests/
   rendered-html.test.mjs  Dataset, year-filter, search-tool, healthcare, and rendered-HTML checks
 worker/
   index.ts              Cloudflare Worker entry and image-optimization route
+docs/
+  RESOURCE_SAFETY_AUDIT.md  Dated destination-level trust review and evidence
 .openai/hosting.json    Sites project and optional logical storage bindings
 SEARCH_TOOL_RESEARCH.md Verified source notes for work-setup and compensation guidance
 vite.config.ts          Vinext, Sites, and Cloudflare build configuration
@@ -140,7 +143,7 @@ For every maintained file and when to edit it, see [FILE_MAP.md](FILE_MAP.md).
 - the five college-year IDs and their visible/audience labels;
 - allowed resource IDs, formats, and tags;
 - the Resource interface;
-- all 64 resource records, including the Technology-focused Underclassmen Opportunities collection plus HiringCafe and Himalayas;
+- all 62 resource records, including the Technology-focused Underclassmen Opportunities collection plus HiringCafe and Himalayas;
 - the derived featured-resource list and category helper.
 
 The optional `recommendedForYears` field marks years for which a resource is an especially useful starting point. It is editorial resource-level guidance, not a claim that every opportunity at that destination accepts students in those years.
@@ -149,7 +152,7 @@ The “Search your way” section does not create a second catalog. A small type
 
 To add a resource:
 
-1. Verify the destination is live, relevant, reputable, and useful to students.
+1. Verify the destination is live, relevant, reputable, and useful to students using the trust checks in [RESOURCE_GUIDE.md](RESOURCE_GUIDE.md).
 2. Add a stable ID to resourceIds.
 3. Add a Resource object with the same ID to resources.
 4. Reuse existing categories, formats, and tags unless a genuinely new concept is required.
@@ -158,7 +161,7 @@ To add a resource:
 7. Make only supportable claims; omit updateFrequency when cadence is not verified.
 8. Run the quality commands and manually test the relevant searches and filter combinations.
 
-The full curation rules, field reference, and copy-ready example are in [RESOURCE_GUIDE.md](RESOURCE_GUIDE.md).
+The full curation rules, field reference, and copy-ready example are in [RESOURCE_GUIDE.md](RESOURCE_GUIDE.md). The dated destination-by-destination evidence and decisions from the latest review are in [docs/RESOURCE_SAFETY_AUDIT.md](docs/RESOURCE_SAFETY_AUDIT.md).
 
 ## Accessibility and motion
 
@@ -181,6 +184,7 @@ Do not configure a static host to publish dist/client/ by itself: it has no stan
 - Keep visible categories broad and make majors discoverable through aliases.
 - Avoid backend infrastructure while checked-in data and client state remain sufficient.
 - Treat accessibility, reduced motion, mobile layout, and external-link safety as acceptance criteria.
+- Treat a reviewed resource as a useful starting point, never as a guarantee that each external listing is authentic or safe.
 - Add features only when they solve a demonstrated student problem without obscuring the simple browsing flow.
 
 ## Documentation
@@ -191,6 +195,7 @@ Do not configure a static host to publish dist/client/ by itself: it has no stan
 - [FEATURES.md](FEATURES.md) — implemented behavior and explicit non-goals
 - [FILE_MAP.md](FILE_MAP.md) — repository navigation guide
 - [RESOURCE_GUIDE.md](RESOURCE_GUIDE.md) — resource curation and schema reference
+- [docs/RESOURCE_SAFETY_AUDIT.md](docs/RESOURCE_SAFETY_AUDIT.md) — dated ownership, maintenance, moderation, risk, and decision evidence for the catalog
 - [SEARCH_TOOL_RESEARCH.md](SEARCH_TOOL_RESEARCH.md) — dated evidence for the work-setup and compensation guidance
 - [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) — visual language, components, and motion
 - [TESTING.md](TESTING.md) — automated coverage and manual QA

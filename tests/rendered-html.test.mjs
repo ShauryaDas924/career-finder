@@ -155,7 +155,7 @@ test("resource data remains complete, unique, and internally consistent", async 
   } = await loadResourceData();
 
   assert.equal(categories.length, 13);
-  assert.equal(resources.length, 64);
+  assert.equal(resources.length, 62);
   assert.deepEqual(collegeYearIds, [
     "freshman",
     "sophomore",
@@ -227,7 +227,6 @@ test("resource data remains complete, unique, and internally consistent", async 
   const expectedFeaturedIds = [
     "applyguy-2027-internships",
     "handshake",
-    "internlist",
     "jobright",
     "simplify",
   ];
@@ -247,7 +246,8 @@ test("resource data remains complete, unique, and internally consistent", async 
   const expectedYearAssignments = new Map([
     ["handshake", collegeYearIds],
     ["underclassmen-opportunities", ["freshman", "sophomore"]],
-    ["simplify", ["junior", "senior", "new-grad"]],
+    ["linkedin-jobs", collegeYearIds],
+    ["simplify", collegeYearIds],
     ["parker-dewey", collegeYearIds],
     ["ache-administrative-fellowships", ["new-grad"]],
   ]);
@@ -270,6 +270,17 @@ test("resource data remains complete, unique, and internally consistent", async 
   );
   assert.deepEqual(underclassmenResources[0].categories, ["technology"]);
   assert.equal(underclassmenResources[0].featured, false);
+
+  for (const removedResourceId of [
+    "internlist",
+    "vansh-summer-2027-internships",
+  ]) {
+    assert.equal(
+      resources.some(({ id }) => id === removedResourceId),
+      false,
+      `${removedResourceId} should stay out of the audited catalog`,
+    );
+  }
 });
 
 test("search covers the addendum's majors and career directions", async () => {
@@ -390,7 +401,7 @@ test("college-year guidance composes with category and text search", async () =>
   const technologySophomoreResults = search("", "technology", "sophomore");
   assert.deepEqual(
     technologySophomoreResults.map(({ id }) => id),
-    ["underclassmen-opportunities"],
+    ["simplify", "underclassmen-opportunities"],
   );
 
   const sophomoreResearchResults = search("research", "all", "sophomore");
@@ -538,8 +549,10 @@ test("the production page server-renders its content and metadata", async () => 
     "can sort by Highest salary",
     "Find a useful place to look",
     "A few things worth remembering",
+    "Whoopberry curates useful places to search, but individual opportunities are maintained by external services and should be independently verified.",
+    "Unexpected coding test? Verify it first.",
     "Was bored lol so I made this",
-    "Show all 64 resources",
+    "Show all 62 resources",
   ]) {
     assert.ok(text.includes(phrase), `server-rendered page should include “${phrase}”`);
   }
@@ -558,10 +571,10 @@ test("the production page server-renders its content and metadata", async () => 
     assert.ok(text.includes(label), `college-year controls should include “${label}”`);
   }
   for (const [audience, count] of [
-    ["Freshmen", 12],
-    ["Sophomores", 13],
+    ["Freshmen", 13],
+    ["Sophomores", 14],
     ["Juniors", 15],
-    ["Seniors", 19],
+    ["Seniors", 18],
     ["New Grads", 16],
   ]) {
     assert.ok(

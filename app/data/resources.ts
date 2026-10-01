@@ -316,9 +316,7 @@ export const collegeYearById = Object.fromEntries(
 export const resourceIds = [
   "applyguy-2027-internships",
   "simplify-summer-2027-internships",
-  "vansh-summer-2027-internships",
   "wellfound",
-  "internlist",
   "dreamwork-business-internships",
   "jobright-accounting-finance-internships",
   "northwestern-fintech-quant-internships",
@@ -497,7 +495,9 @@ export const resources = [
     format: "GitHub collection",
     featured: true,
     searchTerms: ["software", "SWE", "computer science", "developer", "product management"],
-    updateFrequency: "Continuously verified",
+    updateFrequency: "Reverified every 15 minutes",
+    notes:
+      "U.S.-focused. Prefer the original-employer link and verify its domain; one-click apply is a separate 18+ private-beta service.",
   },
   {
     id: "simplify-summer-2027-internships",
@@ -526,23 +526,6 @@ export const resources = [
     updateFrequency: "Updated daily",
   },
   {
-    id: "vansh-summer-2027-internships",
-    name: "Summer 2027 Tech Internships by Vansh & Ouckah",
-    url: "https://github.com/vanshb03/Summer2027-Internships",
-    description:
-      "A student-maintained GitHub collection of Summer 2027 software and other technical internships.",
-    categories: ["technology"],
-    bestFor: [
-      "Software internships",
-      "AI opportunities",
-      "Product and technical roles",
-    ],
-    tags: ["TECHNOLOGY", "AI / ML", "PRODUCT", "2027"],
-    format: "GitHub collection",
-    featured: false,
-    searchTerms: ["software", "SWE", "computer science", "machine learning"],
-  },
-  {
     id: "wellfound",
     name: "Wellfound",
     url: "https://wellfound.com/jobs",
@@ -569,61 +552,32 @@ export const resources = [
       "UX",
       "product management",
     ],
-  },
-  {
-    id: "internlist",
-    name: "InternList",
-    url: "https://internlist.org/",
-    description:
-      "An internship discovery site spanning a wide range of academic and professional fields.",
-    categories: ["general-any-major"],
-    bestFor: [
-      "Students from many majors",
-      "Broad internship discovery",
-      "Exploring more than one career path",
-    ],
-    tags: ["ALL MAJORS", "EARLY CAREER"],
-    format: "Internship directory",
-    featured: true,
-    recommendedForYears: ["freshman", "sophomore", "junior", "senior"],
-    searchTerms: [
-      "internships broadly",
-      "general internships",
-      "college students",
-      "business",
-      "finance",
-      "design",
-    ],
-    updateFrequency: "Updated hourly",
+    notes:
+      "Startup-first, not student-first. Verify the company domain, never pay, and use Wellfound's Report control for suspicious activity.",
   },
   {
     id: "dreamwork-business-internships",
     name: "Dreamwork Business Internships",
     url: "https://github.com/dreamworkhq/Tech-Internships-2027/blob/main/BUSINESS.md",
     description:
-      "A business-focused page within Dreamwork's 2027 internship collection.",
-    categories: ["business", "finance-risk", "supply-chain-operations"],
+      "A U.S.-focused page of verified-open finance, accounting, actuarial, data, and business-analytics internships.",
+    categories: ["business", "finance-risk"],
     bestFor: [
-      "Business internships",
       "Finance and accounting roles",
-      "Analytics, operations, and actuarial opportunities",
+      "Data and business-analytics internships",
+      "Actuarial opportunities",
     ],
-    tags: ["BUSINESS", "FINANCE", "ACCOUNTING", "OPERATIONS", "2027"],
+    tags: ["BUSINESS", "FINANCE", "ACCOUNTING", "DATA", "2027"],
     format: "GitHub collection",
     featured: false,
-    searchTerms: [
-      "consulting",
-      "sales",
-      "human resources",
-      "HR",
-      "supply chain",
-      "actuarial science",
-    ],
+    searchTerms: ["business analytics", "data analytics", "actuarial science"],
     updateFrequency: "Updated daily",
+    notes:
+      "Links open Dreamwork intermediary pages; verify the employer and application on its official careers site. Resume upload and auto-apply use separate privacy terms.",
   },
   {
     id: "jobright-accounting-finance-internships",
-    name: "Jobright Accounting / Finance Internship Collection",
+    name: "Jobright Daily Accounting & Finance Internships",
     url: "https://github.com/jobright-ai/2026-Account-Internship",
     description:
       "A rolling seven-day feed of accounting and finance internship opportunities.",
@@ -638,6 +592,8 @@ export const resources = [
     featured: false,
     searchTerms: ["audit", "tax", "banking", "risk", "insurance"],
     updateFrequency: "Rolling daily feed",
+    notes:
+      "The repository slug still says 2026, but the rolling feed includes later-year roles. Links route through Jobright; verify each role on the employer's official site.",
   },
   {
     id: "northwestern-fintech-quant-internships",
@@ -655,6 +611,8 @@ export const resources = [
     format: "GitHub collection",
     featured: false,
     searchTerms: ["quant", "quantitative trading", "banking", "investment", "financial engineering"],
+    notes:
+      "Student-organization-maintained and auto-updated; verify each opening and treat qualitative firm notes as community opinion.",
   },
   {
     id: "handshake",
@@ -714,8 +672,16 @@ export const resources = [
     tags: ["ALL MAJORS", "EARLY CAREER"],
     format: "Job platform",
     featured: false,
-    recommendedForYears: ["senior", "new-grad"],
+    recommendedForYears: [
+      "freshman",
+      "sophomore",
+      "junior",
+      "senior",
+      "new-grad",
+    ],
     searchTerms: ["jobs", "internships", "entry level", "college students", "university"],
+    notes:
+      "Verify recruiter and company identity and the employer domain; never pay or share sensitive data early, and review profile visibility.",
   },
   {
     id: "simplify",
@@ -732,7 +698,13 @@ export const resources = [
     tags: ["TECHNOLOGY", "ALL MAJORS", "EARLY CAREER"],
     format: "Job platform",
     featured: true,
-    recommendedForYears: ["junior", "senior", "new-grad"],
+    recommendedForYears: [
+      "freshman",
+      "sophomore",
+      "junior",
+      "senior",
+      "new-grad",
+    ],
     searchTerms: [
       "software",
       "computer science",
@@ -751,6 +723,8 @@ export const resources = [
       "high paying",
       "highest paying",
     ],
+    notes:
+      "Browsing does not require Copilot; account features are 18+ and process resume and application data. Verify employer domains and flag suspicious postings.",
   },
   {
     id: "y-combinator-jobs",
@@ -820,6 +794,8 @@ export const resources = [
     format: "Professional association job board",
     featured: false,
     searchTerms: ["CPA", "management accounting", "auditing", "tax", "financial reporting"],
+    notes:
+      "Official association board; independently verify third-party employer listings before sharing sensitive information.",
   },
   {
     id: "society-of-actuaries-jobs",
@@ -855,6 +831,8 @@ export const resources = [
     featured: false,
     recommendedForYears: ["junior", "senior", "new-grad"],
     searchTerms: ["investment banking", "asset management", "private equity", "trading", "quantitative finance"],
+    notes:
+      "Open global finance platform; confirm each role on the employer's official careers site before sharing sensitive data.",
   },
   {
     id: "mypath-insurance-careers",
@@ -891,6 +869,8 @@ export const resources = [
     format: "Professional association job board",
     featured: false,
     searchTerms: ["inventory", "demand planning", "distribution", "procurement", "operations management"],
+    notes:
+      "Official association board; verify each employer and application on the employer's own domain.",
   },
   {
     id: "ism-career-center",
@@ -908,6 +888,8 @@ export const resources = [
     format: "Professional association job board",
     featured: false,
     searchTerms: ["purchasing", "sourcing", "supplier management", "logistics"],
+    notes:
+      "ISM states direct employer listings are not screened or identity-verified; confirm roles on the employer's official careers site.",
   },
   {
     id: "sme-jobs-connection",
@@ -925,6 +907,8 @@ export const resources = [
     format: "Professional association job board",
     featured: false,
     searchTerms: ["manufacturing", "production", "quality engineering", "industrial engineering", "process engineering"],
+    notes:
+      "Some postings may use an undisclosed employer; independently verify the employer and role before applying.",
   },
   {
     id: "selectleaders",
@@ -932,7 +916,7 @@ export const resources = [
     url: "https://www.selectleaders.com/jobs/",
     description:
       "A specialized job board for commercial real estate, development, and property careers.",
-    categories: ["business", "general-any-major"],
+    categories: ["business"],
     bestFor: [
       "Commercial real estate",
       "Property and development roles",
@@ -942,6 +926,8 @@ export const resources = [
     format: "Industry job board",
     featured: false,
     searchTerms: ["property management", "real estate development", "acquisitions", "architecture"],
+    notes:
+      "SelectLeaders does not authenticate every user or guarantee listing legitimacy; report suspicious postings and verify through the employer.",
   },
   {
     id: "cmaa-career-hq",
@@ -976,6 +962,8 @@ export const resources = [
     format: "Industry job board",
     featured: false,
     searchTerms: ["tourism", "event management", "hotel management", "food and beverage", "guest services"],
+    notes:
+      "Listings are posted by external employers; Hcareers says it does not review or verify user-posted content. Confirm the employer and role through the employer's official careers site before sharing sensitive information.",
   },
   {
     id: "ache-job-center",
@@ -1023,7 +1011,8 @@ export const resources = [
       "administrative residency",
       "MHA",
     ],
-    notes: "Many fellowships are designed for graduate students or recent graduate-degree recipients.",
+    notes:
+      "Most fellowships are designed for graduate students or recent graduate-degree recipients. ACHE reviews submissions for posting but does not independently verify sponsor information, so confirm each opportunity with the host organization.",
   },
   {
     id: "mgma-career-center",
@@ -1064,6 +1053,8 @@ export const resources = [
     format: "Professional association job board",
     featured: false,
     searchTerms: ["epidemiology", "biostatistics", "community health", "environmental health", "health policy"],
+    notes:
+      "APHA's terms say direct online employer listings are not screened. Verify the employer and role through the employer's official site before applying.",
   },
   {
     id: "amia-career-center",
@@ -1154,7 +1145,7 @@ export const resources = [
   {
     id: "biospace-jobs",
     name: "BioSpace Jobs",
-    url: "https://www.biospace.com/jobs",
+    url: "https://jobs.biospace.com/",
     description:
       "An industry job board focused on biotechnology, pharmaceutical, and life-sciences careers.",
     categories: ["healthcare", "science-research"],
@@ -1287,7 +1278,8 @@ export const resources = [
     featured: false,
     recommendedForYears: ["senior", "new-grad"],
     searchTerms: ["biology", "neuroscience", "laboratory", "biomedical science", "postbac", "clinical research"],
-    notes: "Some opportunities are intended for specific education or training levels.",
+    notes:
+      "The board includes both NIH and outside-employer postings; use the “Only show jobs within NIH” filter when desired and independently verify outside organizations. Some opportunities are intended for specific education or training levels.",
   },
   {
     id: "nsf-reu",
@@ -1443,7 +1435,8 @@ export const resources = [
     format: "Industry job board",
     featured: false,
     searchTerms: ["legal", "pre-law", "law student", "public defender", "legal aid", "public service"],
-    notes: "Some services or listings may depend on a participating law-school account.",
+    notes:
+      "Some services depend on a participating law-school account. PSJD says it does not routinely screen employer listings, so verify the organization before applying.",
   },
   {
     id: "ama-marketing-jobs",
@@ -1529,6 +1522,8 @@ export const resources = [
     format: "Industry job board",
     featured: false,
     searchTerms: ["graphic design", "user interface", "user experience", "industrial design", "media design"],
+    notes:
+      "Employer-posted listings and portfolios are external content; confirm the company and role on its official site before applying.",
   },
   {
     id: "edsurge-jobs",
@@ -1564,6 +1559,8 @@ export const resources = [
     featured: false,
     recommendedForYears: ["senior", "new-grad"],
     searchTerms: ["teacher", "school counselor", "special education", "student support", "school administrator"],
+    notes:
+      "Applications may request sensitive records such as transcripts or Social Security information; submit them only through the confirmed official school or district workflow.",
   },
   {
     id: "higheredjobs",
@@ -1680,7 +1677,8 @@ export const resources = [
       "new-grad",
     ],
     searchTerms: ["micro internship", "college students", "project work", "career exploration", "remote internship"],
-    notes: "Project availability and fit vary; treat micro-internships as one part of a broader search.",
+    notes:
+      "Participants work as Parker Dewey contractors rather than client employees; review payment, tax, project, and confidentiality terms before accepting.",
   },
   {
     id: "careeronestop-job-search",
@@ -1721,6 +1719,8 @@ export const resources = [
       "entry level jobs",
       "career opportunities",
     ],
+    notes:
+      "Use job matches as leads and verify the role on the employer's official careers site before submitting sensitive information. Account features process resume and profile data.",
   },
   {
     id: "hiringcafe",
@@ -1847,7 +1847,7 @@ export const resources = [
       "early insight programs",
     ],
     notes:
-      "Deadlines and eligibility vary; verify each opportunity on its original source.",
+      "Community-maintained; use the readable directory in your browser and verify each opportunity on the employer's official site. Deadlines and eligibility vary.",
   },
 ] as const satisfies readonly Resource[];
 

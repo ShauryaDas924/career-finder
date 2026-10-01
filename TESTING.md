@@ -1,6 +1,6 @@
 # Testing
 
-Where to Look uses a small test system matched to its deliberately simple architecture. Automated checks protect the curated dataset, specialist-first search behavior, work-setup and compensation discovery, college-year guidance, healthcare coverage, and the server-rendered page. Manual review covers interaction and visual behavior that the current suite does not automate.
+Where to Look uses a small test system matched to its deliberately simple architecture. Automated checks protect the curated dataset, specialist-first search behavior, work-setup and compensation discovery, college-year guidance, healthcare coverage, public safety guidance, and the server-rendered page. Manual review covers interaction, visual behavior, and destination-level trust evidence that the current suite does not automate.
 
 ## Tools and locations
 
@@ -39,7 +39,7 @@ Do not run the Node test file against stale output. Its rendered-page test impor
 
 The dataset test verifies:
 
-- 13 category records and 64 resource records
+- 13 category records and 62 resource records
 - unique category IDs, resource IDs, and resource URLs
 - alignment between the exported ID lists and data arrays
 - the exact college-year ID order: `freshman`, `sophomore`, `junior`, `senior`, `new-grad`
@@ -50,10 +50,10 @@ The dataset test verifies:
 - only known category IDs
 - only known, nonrepeating college-year IDs in optional `recommendedForYears` arrays
 - at least one resource in every category
-- at least one recommended resource for every college year, intentional assignments on representative resources, and the rendered counts: 12 Freshmen, 13 Sophomores, 15 Juniors, 19 Seniors, and 16 New Grads
-- the exact five intended featured resources
+- at least one recommended resource for every college year, intentional assignments on representative resources, and the rendered counts: 13 Freshmen, 14 Sophomores, 15 Juniors, 18 Seniors, and 16 New Grads
+- the exact four intended featured resources
 
-These are structural checks. They do not make network requests, so a passing test does not prove that an external destination is currently live or that its content still supports the description.
+These are structural checks. They do not make network requests, so a passing test does not prove that an external destination is currently live, that its content still supports the description, or that every listing it publishes is legitimate.
 
 ### Search behavior
 
@@ -69,7 +69,7 @@ The focused-search test verifies that work-setting, nearby, and job-type phrases
 
 The college-year test verifies that year guidance composes with the existing filters instead of bypassing them. It covers:
 
-- all 64 resources when category, year, and query are unrestricted;
+- all 62 resources when category, year, and query are unrestricted;
 - a Technology + Sophomore result narrowed to the intended underclassmen resource;
 - a Sophomore + `research` query retaining a strong research resource;
 - category + year + query intersections for underclassmen technology and new-grad healthcare;
@@ -89,11 +89,12 @@ The production-page test invokes the built Worker and verifies:
 - `lang="en"`
 - the current title, description, and host-derived Open Graph image URL
 - important page headings and copy in server-rendered HTML
+- the destination-review limitation and the “Unexpected coding test? Verify it first.” guidance
 - the Browse by College Year heading and eligibility guidance
 - all five year labels and the default pressed “All years” control
 - the “Search your way” heading, both intent headings, verified salary-sort wording, and placement between year browsing and the library
 - canonical Handshake, Himalayas, HiringCafe, and USAJOBS Early Careers links within that section
-- the 64-resource expansion control
+- the 62-resource expansion control
 - absence of starter-preview content
 - server-rendered external resource links
 - `noopener noreferrer` on links that open a new tab
@@ -103,6 +104,7 @@ The production-page test invokes the built Worker and verifies:
 | Change | Minimum checks | Manual review |
 | --- | --- | --- |
 | Resource text, aliases, URL, tags, or category assignment | `npm run lint`, `npx tsc --noEmit`, `npm test` | Confirm the real destination and search result quality. |
+| Resource trust audit or safety-copy change | Full validation suite | Recheck operator, canonical URL/redirects, maintenance, moderation/reporting evidence, student usefulness, card caveats, and the source links in `docs/RESOURCE_SAFETY_AUDIT.md`; inspect the public tip at desktop and mobile sizes. |
 | Category, college-year guidance, or featured-list change | Full validation suite | Category/year counts, card layout, filter labels, combined category + year + query results, result status, reset behavior, shortlist composition, and mobile filter scrolling. |
 | CSS, artwork, or animation | `npm run lint`, `npx tsc --noEmit`, `npm run build` | Desktop, mobile, focus, contrast, overflow, reduced motion, and print if affected. |
 | Search/filter or dialog behavior | Add/update a test where practical, then run the full suite | Keyboard, empty state, combined query/filter state, dialog open/close, polite status announcements. |
@@ -114,7 +116,7 @@ The production-page test invokes the built Worker and verifies:
 
 - Load the page with no console-visible failure.
 - Confirm the sticky navigation reaches each labeled section.
-- Confirm the first 12 library resources appear by default and the expansion control reveals all 64.
+- Confirm the first 12 library resources appear by default and the expansion control reveals all 62.
 - Confirm Browse by College Year shows Freshman, Sophomore, Junior, Senior, and New Grad with counts derived from the current dataset.
 - Choose each year and confirm it applies the matching library filter, collapses an expanded list, scrolls to the library, and focuses search.
 - Confirm “Search your way” appears after college-year browsing and before the library, with two balanced intent panels and four compact canonical resource links.
@@ -130,6 +132,7 @@ The production-page test invokes the built Worker and verifies:
 - Confirm cards use one column and buttons remain usable.
 - Confirm the illustration does not cover copy or controls.
 - Confirm the document has no unintended horizontal page overflow.
+- Confirm the fifth safety tip stacks cleanly, remains readable, and does not introduce horizontal overflow.
 
 ### Search and filters
 
@@ -149,6 +152,10 @@ The production-page test invokes the built Worker and verifies:
 
 - Open a sample of general, specialist, government, association, and GitHub resources.
 - Confirm each destination is live, accurately described, and useful to students.
+- For GitHub collections, inspect owner identity, repository history, current maintenance, and stated purpose in the browser; confirm the directory is readable without cloning or running repository code.
+- Confirm the page says Whoopberry curates useful places to search while individual opportunities remain external and should be independently verified.
+- Confirm the unexpected-code-assessment tip calmly tells students to verify unfamiliar repositories, packages, scripts, containers, or binaries through the company's official domain before executing them.
+- Recheck the dated ownership, maintenance, moderation, risk, and decision evidence in [`docs/RESOURCE_SAFETY_AUDIT.md`](docs/RESOURCE_SAFETY_AUDIT.md). Treat it as a destination audit, not a guarantee about every external listing.
 - Recheck the four “Search your way” destination claims against [`SEARCH_TOOL_RESEARCH.md`](SEARCH_TOOL_RESEARCH.md), including Himalayas' remote-only scope and USAJOBS' federal-only salary sort.
 - Confirm links open a new tab without giving the new page access to `window.opener`.
 - Recheck any visible update-frequency claim against its source.
