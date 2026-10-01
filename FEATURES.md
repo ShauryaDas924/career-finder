@@ -2,7 +2,7 @@
 
 Where to Look is a curated directory of external internship and early-career resources. It helps college students decide where to search; it does not host, copy, scrape, or accept applications for jobs.
 
-The current dataset contains **64 resources across 13 broad career categories**. Counts shown in the interface are derived from [`app/data/resources.ts`](app/data/resources.ts), not duplicated in the component.
+The current dataset contains **62 resources across 13 broad career categories**. Counts shown in the interface are derived from [`app/data/resources.ts`](app/data/resources.ts), not duplicated in the component.
 
 ## Directory and discovery
 
@@ -38,13 +38,13 @@ The current categories are Technology; Business; Finance & Risk; Healthcare; Eng
 
 ### Featured starting points
 
-**What it does:** Presents five broad, student-friendly resources before the full library: ApplyGuy, InternList, Handshake, Simplify, and Jobright.ai.
+**What it does:** Presents four broad, student-friendly resources before the full library: ApplyGuy, Handshake, Simplify, and Jobright.ai.
 
 **Why it exists:** A short starting set reduces decision fatigue for students who do not yet know which specialist source they need.
 
 ### Progressive disclosure
 
-**What it does:** The unfiltered library initially renders the first 12 resources and offers a button to show all 64. A search, category selection, or college-year selection displays all matching results immediately.
+**What it does:** The unfiltered library initially renders the first 12 resources and offers a button to show all 62. A search, category selection, or college-year selection displays all matching results immediately.
 
 **Why it exists:** The first visit remains approachable while the complete directory is still one action away.
 
@@ -84,9 +84,11 @@ See [`RESOURCE_GUIDE.md`](RESOURCE_GUIDE.md) for the indexing and curation rules
 
 ### Search tips and product explanation
 
-**What they do:** Reinforce applying early, using several sources, enabling alerts, checking original employer pages, and understanding why the directory exists.
+**What they do:** Reinforce applying early, using several sources, enabling alerts, checking original employer pages, and understanding why the directory exists. The tips explicitly explain: “Whoopberry curates useful places to search, but individual opportunities are maintained by external services and should be independently verified.” A native fifth tip, “Unexpected coding test? Verify it first,” advises students to confirm an unfamiliar repository, package installation, script, container, or binary through the company's official domain before executing it.
 
 **Why they exist:** Good search habits are part of the resource guide's value.
+
+This wording is a calm verification boundary, not a claim that Whoopberry has certified every listing or that a destination can never contain misleading user-submitted content. The dated destination-level review is documented in [`docs/RESOURCE_SAFETY_AUDIT.md`](docs/RESOURCE_SAFETY_AUDIT.md).
 
 ### Resource-suggestion notice
 
@@ -126,7 +128,7 @@ See [`ACCESSIBILITY.md`](ACCESSIBILITY.md) for implementation details and the ma
 
 ### Safe external destinations
 
-**What it does:** Opens resource destinations in a new tab with `rel="noopener noreferrer"` and an accessible label that warns about the new tab.
+**What it does:** Opens resource destinations in a new tab with `rel="noopener noreferrer"` and an accessible label that warns about the new tab. Catalog inclusion reflects a reviewed destination, not a guarantee about each opportunity, recruiter, assessment, or downloadable file on that service.
 
 **Why it exists:** Where to Look remains an organizer while the source website owns its listings, application flow, privacy policy, and eligibility details.
 

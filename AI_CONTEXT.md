@@ -67,6 +67,7 @@ For the request-to-render and search data flows, see [ARCHITECTURE.md](ARCHITECT
 | `app/page.tsx` | The sole App Router page; renders `CareerGuide`. |
 | `tests/rendered-html.test.mjs` | Resource-integrity, year-aware filtering, broad and focused search coverage, healthcare-specialist, and server-rendered HTML/metadata tests. |
 | `SEARCH_TOOL_RESEARCH.md` | Dated first-party evidence and candidate decisions for work-setup and compensation capability claims. |
+| `docs/RESOURCE_SAFETY_AUDIT.md` | Dated destination-level review of ownership, maintenance, moderation, risk, and keep/caution/remove/replace decisions for the resource catalog. |
 | `worker/index.ts` | Cloudflare Worker entry point; routes image-optimization requests and delegates application requests to Vinext. |
 | `vite.config.ts` | Vinext, Sites, and Cloudflare build integration plus local binding declarations. |
 | `build/sites-vite-plugin.ts` | Copies Sites hosting metadata, and a migration directory if one ever exists, into the build artifact. |
@@ -91,13 +92,13 @@ See [FILE_MAP.md](FILE_MAP.md) for the complete navigation map.
 | `bestFor` | Yes | Student-oriented use cases displayed on the card and included in search. |
 | `tags` | Yes | Controlled `ResourceTag` values displayed as compact labels and included in search. Cards display at most four tags, or three in the featured section. |
 | `format` | Yes | Controlled `ResourceFormat` value used both as visible context and to derive the compact format mark. |
-| `featured` | Yes | Whether the resource appears in the separate five-card starting shortlist. |
+| `featured` | Yes | Whether the resource appears in the separate four-card starting shortlist. |
 | `recommendedForYears` | No | Controlled college-year IDs for which the resource is an especially useful starting point. This is editorial resource-level guidance, not job-level eligibility. |
 | `searchTerms` | No | Specific majors, roles, and common aliases included in search without adding visible card clutter. |
 | `updateFrequency` | No | A visible cadence claim. Include only when it has been verified and is useful. |
 | `notes` | No | Important caveat or eligibility/context note displayed at the bottom of the card. |
 
-The current data contains **64 resources**, **13 broad categories**, and five featured resources: ApplyGuy, Handshake, InternList, Jobright.ai, and Simplify. The Technology category includes the non-featured **Underclassmen Opportunities** collection, recommended for freshmen and sophomores. HiringCafe and Himalayas are non-featured General / Any Major records added after the focused-search research; “Search your way” selects those two alongside Handshake and USAJOBS Early Careers. Simplify remains featured and searchable but is not in the compact mapping. The additions changed the resource total but did not change the `Resource` schema. Tests intentionally protect the totals, featured IDs, focused links, and key year assignments; update the assertions only when an editorially approved data change makes them obsolete.
+The current data contains **62 resources**, **13 broad categories**, and four featured resources: ApplyGuy, Handshake, Jobright.ai, and Simplify. The Technology category includes the non-featured **Underclassmen Opportunities** collection, recommended for freshmen and sophomores. HiringCafe and Himalayas are non-featured General / Any Major records used by “Search your way” alongside Handshake and USAJOBS Early Careers. Simplify remains featured and searchable but is not in the compact mapping. InternList was removed because its applications resolve through Simplify, which already remains in the catalog; the stale, redundant Vansh Summer 2027 tracker was also removed. SelectLeaders is classified only under Business because it is a specialized real-estate board, not a general-any-major destination. The audit changed resource metadata and totals but not the `Resource` schema. Tests intentionally protect the totals, featured IDs, focused links, key year assignments, and public safety copy; update the assertions only when an editorially approved change makes them obsolete.
 
 ### College-year metadata
 
@@ -197,7 +198,7 @@ The repository uses Node's built-in test runner, `node:assert/strict`, and the T
 
 Current automated coverage verifies:
 
-- 13 categories and 64 resources;
+- 13 categories and 62 resources;
 - all five college-year IDs/labels, valid non-duplicated `recommendedForYears` values, and key editorial assignments;
 - unique category IDs, resource IDs, and resource URLs;
 - alignment of ID tuples with authored arrays;
@@ -209,9 +210,10 @@ Current automated coverage verifies:
 - focused work-setup and compensation aliases, including the three verified `highest salary` results: HiringCafe, Himalayas, and USAJOBS;
 - specialist healthcare and nursing search behavior;
 - server-rendered page content, metadata, language, social image URL, the placement and canonical links of “Search your way,” and safe new-tab link attributes;
+- the destination-review limitation and unexpected-code-assessment safety guidance;
 - absence of the removed starter/loading preview.
 
-Automated checks do **not** prove that external destinations are live or that their claims remain current. Verify those editorial facts manually. For a normal completed change, run the real repository commands:
+Automated checks do **not** prove that external destinations are live, that their claims remain current, or that every listing they publish is legitimate. Verify those editorial facts manually and preserve the documented independent-verification boundary. For a normal completed change, run the real repository commands:
 
 ```bash
 npm run lint
@@ -237,12 +239,13 @@ npm test
 2. Keep `app/data/resources.ts` the single source of truth for directory content.
 3. Prefer extending the existing arrays, unions, helper components, and CSS tokens over adding new layers.
 4. Preserve stable IDs. Changing an ID is a data migration even though no database exists because tests and future links may depend on it.
-5. Make resource descriptions, capability copy, and cadence claims factual. A valid URL is not sufficient evidence of usefulness; reverify the dated first-party sources in `SEARCH_TOOL_RESEARCH.md` when changing focused search-tool claims.
+5. Make resource descriptions, capability copy, and cadence claims factual. A valid URL is not sufficient evidence of usefulness; reverify the dated first-party sources in `SEARCH_TOOL_RESEARCH.md` when changing focused search-tool claims and follow the trust checklist in `RESOURCE_GUIDE.md` for every catalog change.
 6. Keep category breadth stable. Add search aliases before proposing a new visible career family.
 7. Preserve server rendering, client hydration, metadata generation, external-link safety, focus behavior, and reduced motion.
 8. Keep derived counts derived from the dataset; do not hard-code them in page copy.
 9. Add or update tests when changing resource totals, protected coverage, featured status, or search behavior.
-10. Avoid unrelated refactors in editorial or visual changes.
+10. Preserve the distinction between auditing a resource destination and guaranteeing individual external listings. Record material destination-level evidence and decisions in `docs/RESOURCE_SAFETY_AUDIT.md`.
+11. Avoid unrelated refactors in editorial or visual changes.
 
 ## Known non-goals and boundaries
 
@@ -252,6 +255,7 @@ npm test
 - It does not provide accounts, alerts, favorites, or application tracking.
 - It does not currently collect resource suggestions. The “Suggest a resource” control opens an informational dialog stating that no contact method is configured.
 - It does not guarantee external availability; maintainers must periodically re-verify destinations.
+- It does not certify individual listings, recruiters, assessments, or downloads as safe; students must independently verify them through the relevant organization's official channels.
 - It is intentionally one route and does not require a backend or database for its present, editor-maintained dataset.
 
 For product boundaries, also read [FEATURES.md](FEATURES.md), [PRIVACY.md](PRIVACY.md), and [RESOURCE_GUIDE.md](RESOURCE_GUIDE.md).

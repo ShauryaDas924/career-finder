@@ -2,7 +2,9 @@
 
 [`app/data/resources.ts`](app/data/resources.ts) is the authoritative source for the taxonomy, resource inventory, search aliases, and featured selection. The interface derives category counts, search results, filters, and featured cards from this file.
 
-Current source inventory: **64 unique resources**, **13 visible categories**, **5 college-year choices**, and **5 featured starting points**. A resource can belong to more than one category, so category totals intentionally add up to more than 64.
+Current source inventory: **62 unique resources**, **13 visible categories**, **5 college-year choices**, and **4 featured starting points**. A resource can belong to more than one category, so category totals intentionally add up to more than 62.
+
+Whoopberry reviews resource destinations as useful places to search; it does not audit or certify every opportunity, recruiter, assessment, or download those external services publish. Students must independently verify the employer, role, application route, and any request to run code through an official organization channel. The latest destination-by-destination evidence and decisions are recorded in [`docs/RESOURCE_SAFETY_AUDIT.md`](docs/RESOURCE_SAFETY_AUDIT.md).
 
 ## Curation principles
 
@@ -30,19 +32,19 @@ Every card should answer “Why would a student open this?” The directory is d
 
 | Category ID | Visible label | Resources |
 | --- | --- | ---: |
-| `technology` | Technology | 11 |
+| `technology` | Technology | 10 |
 | `business` | Business | 18 |
 | `finance-risk` | Finance & Risk | 8 |
 | `healthcare` | Healthcare | 12 |
 | `engineering` | Engineering | 11 |
 | `science-research` | Science & Research | 10 |
-| `supply-chain-operations` | Supply Chain & Operations | 5 |
+| `supply-chain-operations` | Supply Chain & Operations | 4 |
 | `marketing-communications` | Marketing & Communications | 5 |
 | `design-creative` | Design & Creative | 4 |
 | `government-law-policy` | Government, Law & Policy | 10 |
 | `education` | Education | 4 |
 | `human-services-nonprofit` | Human Services & Nonprofit | 5 |
-| `general-any-major` | General / Any Major | 16 |
+| `general-any-major` | General / Any Major | 14 |
 
 These counts come from the current multi-category assignments. Update this table when the dataset changes.
 
@@ -60,9 +62,9 @@ The `Resource` interface is read-only and uses closed TypeScript unions for IDs,
 | `bestFor` | Yes | Non-empty array of short student-oriented uses | Explains who should open it and why | `["Nursing careers"]` |
 | `tags` | Yes | One to five values from `ResourceTag` | Visible scan labels and direct search terms | `["NURSING", "CLINICAL", "HEALTHCARE", "EARLY CAREER"]` |
 | `format` | Yes | One `ResourceFormat` literal | Visible source type and compact format mark | `"Professional association job board"` |
-| `featured` | Yes | Boolean | Includes a resource in the five-card starting section when `true` | `false` |
+| `featured` | Yes | Boolean | Includes a resource in the four-card starting section when `true` | `false` |
 | `recommendedForYears` | No | Array of `CollegeYearId` values for which the destination is an especially useful starting point | Powers Browse by College Year; this is editorial resource guidance, not job-level eligibility | `["freshman", "sophomore"]` |
-| `searchTerms` | No in the type; present on all 64 current resources | Array of specific majors, roles, abbreviations, and aliases | Improves direct search without crowding the card | `["registered nurse", "RN"]` |
+| `searchTerms` | No in the type; present on all 62 current resources | Array of specific majors, roles, abbreviations, and aliases | Improves direct search without crowding the card | `["registered nurse", "RN"]` |
 | `updateFrequency` | No | Short claim that has been specifically verified | Shows an update badge | `"Updated daily"` |
 | `notes` | No | Concise qualification, limitation, or useful caveat | Sets accurate expectations below the card | Eligibility or audience note |
 
@@ -112,7 +114,7 @@ Each ID has a corresponding `CollegeYearMetadata` entry with a visible singular 
 
 `recommendedForYears` is deliberately optional on a resource. Add it only when the destination is an especially useful starting point for that audience. It does **not** assert that every listing on that destination accepts, excludes, or guarantees eligibility for that college year. Students must confirm eligibility on the original opportunity page. Leaving the field out means the resource is not included when a college-year filter is active; it does not mean the resource is unusable or ineligible.
 
-The current unfiltered counts are **12 Freshmen**, **13 Sophomores**, **15 Juniors**, **19 Seniors**, and **16 New Grads**. These are derived from `recommendedForYears` and protected by rendered-page tests; update documentation and assertions together after an intentional editorial change.
+The current unfiltered counts are **13 Freshmen**, **14 Sophomores**, **15 Juniors**, **18 Seniors**, and **16 New Grads**. These are derived from `recommendedForYears` and protected by rendered-page tests; update documentation and assertions together after an intentional editorial change.
 
 ### Focused search-tool guidance
 
@@ -125,7 +127,7 @@ The current mapping uses:
 - `hiringcafe` for broad location/work-setting, minimum/disclosed-pay, and **Highest salary** controls; and
 - `usajobs-early-careers` for minimum-salary filtering and the verified **Highest salary** sort on federal openings.
 
-These four records carry the supporting work-setup, location, job-type, salary, compensation, and pay aliases in `searchTerms`. HiringCafe and Himalayas were added as non-featured General / Any Major resources; the catalog now has 64 records, while its schema and five-resource featured set are unchanged. Simplify remains featured and retains its verified salary-filter aliases, but is not in the compact mapping because HiringCafe covers that broad compensation role and USAJOBS adds a distinct federal specialist. Exact evidence and rejected alternatives are recorded in [`SEARCH_TOOL_RESEARCH.md`](SEARCH_TOOL_RESEARCH.md); reverify those first-party sources before changing a capability claim.
+These four records carry the supporting work-setup, location, job-type, salary, compensation, and pay aliases in `searchTerms`. HiringCafe and Himalayas remain non-featured General / Any Major resources; the catalog now has 62 records and four featured resources, while its schema is unchanged. Simplify remains featured and retains its verified salary-filter aliases, but is not in the compact mapping because HiringCafe covers that broad compensation role and USAJOBS adds a distinct federal specialist. Exact capability evidence and rejected alternatives are recorded in [`SEARCH_TOOL_RESEARCH.md`](SEARCH_TOOL_RESEARCH.md); reverify those first-party sources before changing a capability claim. Destination-level trust evidence is maintained separately in [`docs/RESOURCE_SAFETY_AUDIT.md`](docs/RESOURCE_SAFETY_AUDIT.md).
 
 ## Broad categories, deep search terms
 
@@ -168,10 +170,9 @@ The Browse by College Year and career-path panels derive each visible count from
 
 ## Featured resources
 
-`featuredResources` is derived by filtering `resources` where `featured` is `true`. The current five are:
+`featuredResources` is derived by filtering `resources` where `featured` is `true`. The current four are:
 
 - `applyguy-2027-internships`
-- `internlist`
 - `handshake`
 - `simplify`
 - `jobright`
@@ -180,19 +181,22 @@ Keep the featured set small and broad. Mark a specialist resource as featured on
 
 ## Add a resource
 
-1. Visit the destination and verify that it is live, relevant, and useful to students.
-2. Check for an existing resource with the same URL, organization, or purpose.
-3. Add a stable kebab-case literal to `resourceIds` in the position where the record will appear.
-4. Add the resource object at the matching position in `resources`.
-5. Assign one or more existing broad categories. Add secondary categories only when the resource genuinely serves them.
-6. Write a factual description and two or three concrete `bestFor` statements.
-7. Select one to five existing tags.
-8. Add specific roles, majors, abbreviations, and search aliases to `searchTerms`.
-9. Add `recommendedForYears` only when editorial review supports the resource's usefulness for those audiences; do not infer job eligibility from the destination's general audience.
-10. Leave `updateFrequency` and `notes` out unless they add verified value.
-11. Keep `featured: false` unless the shortlist is intentionally changing.
-12. Run `npm test`, `npm run lint`, `npx tsc --noEmit`, and `npm run build`. Update exact-count or coverage assertions only when the dataset change is deliberate.
-13. Manually try the important new search phrases, combine any assigned college years with relevant categories and queries, and open the external link.
+1. Visit the destination and verify its operator, canonical domain, current maintenance, student relevance, reporting or moderation path when applicable, and useful purpose.
+2. Check for an existing resource with the same URL, organization, purpose, or stronger coverage; do not keep a weaker duplicate merely to preserve the count.
+3. Follow redirects to their settled destination and investigate any operator, domain, or branding mismatch before inclusion.
+4. For a GitHub collection, verify the owner identity or credible affiliation, repository history and recent maintenance, clear student-facing purpose, and that the useful directory can be read without executing cloned code, packages, scripts, containers, or binaries.
+5. Add a stable kebab-case literal to `resourceIds` in the position where the record will appear.
+6. Add the resource object at the matching position in `resources`.
+7. Assign one or more existing broad categories. Add secondary categories only when the resource genuinely serves them.
+8. Write a factual description and two or three concrete `bestFor` statements.
+9. Select one to five existing tags.
+10. Add specific roles, majors, abbreviations, and search aliases to `searchTerms`.
+11. Add `recommendedForYears` only when editorial review supports the resource's usefulness for those audiences; do not infer job eligibility from the destination's general audience.
+12. Leave `updateFrequency` and `notes` out unless they add verified value.
+13. Keep `featured: false` unless the shortlist is intentionally changing.
+14. Record the evidence and editorial decision in [`docs/RESOURCE_SAFETY_AUDIT.md`](docs/RESOURCE_SAFETY_AUDIT.md).
+15. Run `npm test`, `npm run lint`, `npx tsc --noEmit`, and `npm run build`. Update exact-count or coverage assertions only when the dataset change is deliberate.
+16. Manually try the important new search phrases, combine any assigned college years with relevant categories and queries, and open the external link.
 
 An illustrative object uses the same structure as the production array. Replace every placeholder with verified information, and add the chosen ID to `resourceIds` first:
 
@@ -238,15 +242,20 @@ The example is a schema template, not a current resource or endorsement.
 Before accepting a new or changed resource, confirm:
 
 - **URL:** HTTPS, direct enough to be useful, and free of an unnecessary tracking string.
-- **Identity:** the organization and page are what the name says they are.
+- **Canonical destination:** redirects settle on an expected official or clearly disclosed intermediary domain without impersonation or an unexplained operator change.
+- **Identity:** the operator is identifiable and the organization and page are what the name says they are.
+- **Maintenance:** the site, collection, or directory has current activity or other credible evidence that it is still maintained.
 - **Audience:** students or early-career users can reasonably benefit, even if some listings target experienced applicants.
 - **Description:** every claim is visible or otherwise verified; avoid job-count or availability claims that change quickly.
 - **Update frequency:** add it only when a trustworthy source supports the exact wording.
-- **Usefulness:** the destination adds a field, opportunity type, or workflow not already served well.
+- **Usefulness:** the destination adds a field, opportunity type, or workflow not already served better by an existing resource.
+- **Reporting and moderation:** where listings or user submissions are involved, look for an abuse-reporting, correction, or moderation route and document any meaningful limitation.
 - **Search:** important majors, roles, and abbreviations find the specialist resource directly.
 - **External capabilities:** current first-party documentation supports every filter or sort named in visible copy; narrow claims by market or audience where required.
 - **Categories:** assignments are broad, defensible, and not added merely to increase exposure.
 - **College years:** each `recommendedForYears` assignment reflects editorial usefulness, uses a known ID, and is never presented as opportunity-level eligibility.
 - **External behavior:** the link opens the intended page and the site's own eligibility and privacy terms remain clear.
+- **GitHub collections:** the owner, history, maintenance, and purpose are credible; the directory is useful in a browser; and no student needs to clone or execute repository content to use it.
+- **Trust boundary:** inclusion supports the destination as a starting point, not every external listing as verified safe. Add a concise card note only when a destination-specific limitation gives students actionable context.
 
-The automated suite checks HTTPS shape, URL parseability, duplicate IDs and URLs, required fields, tag limits, category validity, category coverage, the five college-year IDs and labels, valid nonrepeating year assignments, at least one recommended resource per year, intentional sample assignments, featured IDs, required searches, and category + year + query composition. It does **not** make live network requests or judge whether an editorial year recommendation remains useful, so both URL and year-guidance verification remain manual responsibilities.
+The automated suite checks HTTPS shape, URL parseability, duplicate IDs and URLs, required fields, tag limits, category validity, category coverage, the five college-year IDs and labels, valid nonrepeating year assignments, at least one recommended resource per year, intentional sample assignments, featured IDs, required searches, category + year + query composition, and the public safety guidance. It does **not** make live network requests, verify operator identity, inspect individual listings, or judge whether an editorial year recommendation remains useful, so destination and year-guidance review remain manual responsibilities.
